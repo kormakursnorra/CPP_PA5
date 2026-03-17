@@ -4,29 +4,28 @@
 
 ### 1. Project Description
 
-We will build a terminal-based maze game in C++ where the player navigates a randomly generated
-maze from a start point to an exit. Before the player takes control, the program runs Dijkstra's algorithm to compute the shortest path through the maze. During gameplay, the player can receive hints at points where they're struggling; the hint system uses the precomputed path to reveal the next correct step without giving away the entire solution. The game is displayed in the terminal using the ncurses library, which also handles real-time keyboard input (arrow keys) without requiring the player to press Enter.
+We will build a terminal-based maze game in C++ where the player navigates a randomly generated maze from a start point to an exit. Before the player takes control, the program runs Dijkstra's algorithm to find the shortest path through the maze. During gameplay, the player can receive hints at points where they're struggling; the hint system uses the precomputed path to reveal the next correct step without giving away the entire solution. The game is displayed in the terminal using the ncurses library, which also handles real-time keyboard input (arrow keys) without requiring the player to press Enter.
 
 ### 2. Grading Items
 
 #### 2.1 New Program with Similar Methods to Previous Assignments
 
-What fulfils this item: The entire project is a new standalone C++ program using familiar concepts such as classes, data structures, file I/O (loading/saving maze configurations), and standard algorithms all applied in a new context.
+What fulfills this: The entire project is a new standalone C++ program using known concepts such as classes, data structures, file I/O (loading/saving maze configurations), and standard algorithms that are being applied in a new context.
 *Estimated point value: 40-60 pts*
 
 #### 2.2 Complex Decisions — Search Algorithm (Dijkstra's)
 
-What fulfills this item: Dijkstra's shortest-path algorithm is run on the maze graph at generation time. The maze cells are treated as graph nodes, with edges existing only where there is no wall between two adjacent cells. The algorithm produces the optimal path used by the hint system.
+What fulfills this: Dijkstra's shortest-path algorithm is run on the maze graph at generation time. The maze cells are treated as graph nodes, with edges existing only where there is no wall between two adjacent cells. The algorithm produces the optimal path used by the hint system.
 *Estimated point value: 40 pts*
 
 #### 2.3 Interface with I/O Device (Other than Text Terminal) — ncurses
 
-What fulfils this item: The ncurses library provides real-time keyboard input capture (arrow keys, hint key) and full terminal screen rendering. This goes beyond standard stdin/stdout and qualifies as interfacing with an input/output device.
+What fulfills this: The ncurses library provides real-time keyboard input capturing (f.ex. arrow keys) and full terminal screen rendering.Going beyond the standard stdin/stdout and qualifies as interfacing with an input/output device.
 *Estimated point value: 20–40 pts*
 
 #### 2.4 Third-Party Library Integration
 
-What fulfills this item: ncurses is used for terminal UI and raw input. nlohmann/json may be used for saving and loading maze state. This satisfies the requirement to integrate a third-party library.
+What fulfills this: ncurses is used for terminal UI and raw input. nlohmann/json may be used for saving and loading maze state. This satisfies the requirement to integrate a third-party library.
 *Estimated point value: Required / implicit*
 
 ### 3. Estimated Point Value
