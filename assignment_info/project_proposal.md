@@ -4,7 +4,7 @@
 
 ### 1. Project Description
 
-We will build a terminal-based maze game in C++ where the player navigates a randomly generated maze from a start point to an exit. Before the player takes control, the program runs Dijkstra's algorithm to find the shortest path through the maze. During gameplay, the player can receive hints at points where they're struggling; the hint system uses the precomputed path to reveal the next correct step without giving away the entire solution. The game is displayed in the terminal using the ncurses library, which also handles real-time keyboard input (arrow keys) without requiring the player to press Enter.
+We will build a terminal-based maze game in C++ where the player navigates a randomly generated maze from a start point to an exit. Before the player takes control, the program runs Dijkstra's algorithm to find the shortest path through the maze. During gameplay, the player can receive hints at points where they're struggling; the hint system uses the precomputed path to reveal the next correct step without giving away the entire solution. Throughout a round, the game keeps track of the number of mistakes the player makes. If the player manages to finish the maze, they receive a score based on the number of mistakes made, if the player however is unable to clear the maze under the alloted mistakes limit, he loses. The game is displayed in the terminal using the ncurses library, which also handles real-time keyboard input (arrow keys) without requiring the player to press Enter.
 
 ### 2. Grading Items
 
