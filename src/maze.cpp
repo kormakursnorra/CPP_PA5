@@ -75,57 +75,19 @@ std::vector<Cell*> Maze::getUnvisitedNeighbors(Cell& cell) {
 void Maze::removeWall(Cell& curr, Cell& next) {
     int dx = curr.getX() - next.getX();
     if (dx == 1) {
-        curr.walls[3] = false;
-        next.walls[1] = false;
+        curr.walls.south = false;
+        next.walls.east = false;
     } else if (dx == -1) {
-        curr.walls[1] = false;
-        next.walls[3] = false;
+        curr.walls.east = false;
+        next.walls.south = false;
     }
     
     int dy = curr.getY() - next.getY();
     if (dy == 1) {
-        curr.walls[0] = false;
-        next.walls[2] = false;
+        curr.walls.north = false;
+        next.walls.west = false;
     } else if (dy == -1) {
-        curr.walls[2] = false;
-        next.walls[0] = false;
+        curr.walls.west = false;
+        next.walls.north = false;
     }
-}
-
-void Maze::displayMaze() {
-    std::stringstream strStream;
-
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            const Cell c = grid[y][x];
-            if (c.walls[0]) strStream << "═";
-            else            strStream << " ";
-
-            // if (c.walls[0] && c.walls[1]) strStream << "╔";
-            // if (c.walls[0] && c.walls[3]) strStream << "╗";
-        }
-
-        strStream << "\n";
-        strStream << "║ ";
-        
-        for (int x = 0; x < width; ++x) {
-            // const Cell c = grid[y][x];
-            // if (c.walls[1]) strStream << "║ ";
-            // else            strStream << " ";
-            strStream << " ";
-        }
-
-        strStream << " ║\n";
-
-        for (int x = 0; x < width; ++x) {
-            const Cell c = grid[y][x];
-            if (c.walls[2]) strStream << "═";
-            else            strStream << " ";
-        }
-    }
-    std::cout << strStream.str();
-}
-
-const std::vector<std::vector<Cell>>& Maze::getGrid() const {
-    return grid;
 }

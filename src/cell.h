@@ -1,14 +1,21 @@
 #ifndef CELL_H
 #define CELL_H
 
+struct Walls {
+    bool north;
+    bool south;
+    bool east;
+    bool west;
+};
+
 class Cell {
 private:
     int x, y;
 
 public:
     Cell(int x, int y);
+    Walls walls;
     bool visited;
-    bool walls[4]; // Top: 0, Right: 1, Bottom: 2, Left: 3 
 
     int getX() const;
     int getY() const;
