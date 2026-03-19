@@ -34,7 +34,7 @@
 // }
 
 int main() {
-    Maze maze(25, 25);
+    Maze maze(16, 16);
     maze.generateMaze();
     Player player(0, 0);
     Renderer renderer;

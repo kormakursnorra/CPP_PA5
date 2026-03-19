@@ -1,5 +1,6 @@
 CXX      := g++
 CXXFLAGS := -std=c++17 -g -Isrc -Wall -Werror -Wextra -fsanitize=address -MMD -MP
+LDFLAGS	 := -lncurses 
 
 SRC_DIR   := src
 BIN_DIR   := bin
@@ -17,7 +18,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 	@echo "Built target: $@"
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
