@@ -3,7 +3,7 @@
 
 #include <random>
 #include <vector>
-#include "cell.h"
+#include "cell_k.h"
 
 
 using matrix = std::vector<std::vector<Cell>>;

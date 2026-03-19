@@ -1,12 +1,9 @@
-#include "maze.h"
-#include "cell.h"
+#include "maze_k.h"
 
 #include <random>
 #include <vector>
 #include <cassert>
-#include <sstream>
 #include <cstdlib>
-#include <iostream>
 #include <algorithm>
 
 

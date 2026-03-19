@@ -1,12 +1,11 @@
-#include "maze.h"
+#include "maze_k.h"
 #include <cassert>
 #include <math.h>
 #include <cstdlib>
-#include <iostream>
 
 int main(int argc, char* argv[]) {
-    int width = 16;
-    int height = 16;
+    int width = 32;
+    int height = 32;
     
     if (argc == 3) {
         int tmp_w = atoi(argv[1]);
@@ -27,6 +26,5 @@ int main(int argc, char* argv[]) {
     assert(width % 2 == 0 && height % 2 == 0);
     Maze maze(width, height);
     maze.generateMaze();
-    maze.displayMaze();
     return 0;
 }
