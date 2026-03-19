@@ -25,6 +25,7 @@ public:
     
     int getCols() const { return static_cast<int>(width); };
     int getRows() const { return static_cast<int>(height); };
+    const Cell& getCell(int x, int y) const { return grid[x][y]; }
     const matrix& getGrid() const { return grid; };
 
     std::vector<Cell*> getUnvisitedNeighbors(Cell& cell);

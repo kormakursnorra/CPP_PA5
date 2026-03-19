@@ -91,3 +91,4 @@ void Maze::removeWall(Cell& curr, Cell& next) {
         nextWalls.north = false;
     }
 }
+
