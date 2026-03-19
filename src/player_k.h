@@ -1,4 +1,7 @@
-#pragma once
+// #pragma once
+#ifndef PLAYER_K_H
+#define PLAYER_K_H
+
 #include "maze_k.h"
 
 class Player {
@@ -13,3 +16,6 @@ private:
     int row, col;
     int mistakes;
 };
+
+
+#endif

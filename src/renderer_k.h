@@ -1,4 +1,7 @@
-#pragma once
+// #pragma once
+#ifndef RENDERED_K_H
+#define RENDERED_K_H
+
 #include "maze_k.h"
 
 class Renderer {
@@ -9,3 +12,5 @@ public:
     void drawPlayer(int r, int c);
     void mazeRefresh();
 };
+
+#endif
