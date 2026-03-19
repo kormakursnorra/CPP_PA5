@@ -1,4 +1,4 @@
-#include "cell.h"
+#include "cell_k.h"
 #include <cassert>
 
 Cell::Cell(int x, int y) : x(x), y(y), visited(false) {

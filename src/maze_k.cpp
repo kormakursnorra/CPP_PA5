@@ -71,20 +71,23 @@ std::vector<Cell*> Maze::getUnvisitedNeighbors(Cell& cell) {
 
 void Maze::removeWall(Cell& curr, Cell& next) {
     int dx = curr.getX() - next.getX();
+    Walls& currWalls = curr.walls;
+    Walls& nextWalls = next.walls;
+
     if (dx == 1) {
-        curr.walls.south = false;
-        next.walls.east = false;
+        currWalls.south = false;
+        nextWalls.east = false;
     } else if (dx == -1) {
-        curr.walls.east = false;
-        next.walls.south = false;
+        currWalls.east = false;
+        nextWalls.south = false;
     }
     
     int dy = curr.getY() - next.getY();
     if (dy == 1) {
-        curr.walls.north = false;
-        next.walls.west = false;
+        currWalls.north = false;
+        nextWalls.west = false;
     } else if (dy == -1) {
-        curr.walls.west = false;
-        next.walls.north = false;
+        currWalls.west = false;
+        nextWalls.north = false;
     }
 }

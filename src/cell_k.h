@@ -1,5 +1,5 @@
-#ifndef CELL_H
-#define CELL_H
+#ifndef CELL_K_H
+#define CELL_K_H
 
 struct Walls {
     bool north;
@@ -19,6 +19,7 @@ public:
 
     int getX() const;
     int getY() const;
+
     void removeWall(int direction);
     bool hasAllWalls() const;
 };

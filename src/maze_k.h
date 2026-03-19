@@ -1,5 +1,5 @@
-#ifndef MAZE_H
-#define MAZE_H
+#ifndef MAZE_K_H
+#define MAZE_K_H
 
 #include <random>
 #include <vector>
@@ -10,7 +10,8 @@ using matrix = std::vector<std::vector<Cell>>;
 
 class Maze {
 private:
-    int width, height;
+    int width;
+    int height;
     matrix grid;
     std::mt19937 randNum;
 
