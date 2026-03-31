@@ -1,24 +1,27 @@
 #pragma once
 #include <vector>
 
+class Renderer;
 struct Cell {
     bool north = true; // ture = wall exists
     bool south = true;
     bool east = true;
     bool west = true;
     bool visited = false;
+    bool inMaze = false; // Used by wilson
 };
 
 class Maze {
 public:
-    Maze(int rows, int cols);
-    void generate();
+    Maze(int rows, int cols, bool animate = false);
+    void wilson(Renderer* renderer = nullptr);
     const Cell& getCell(int r, int c) const;
     int getRows() const;
     int getCols() const;
 
 private:
     int rows, cols;
+    bool animate;
     std::vector<std::vector<Cell>> grid;
-    void carve(int r, int c);
+    void removeWall(int r, int c, int dir);
 };

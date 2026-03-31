@@ -1,48 +1,106 @@
+#include <iostream>
+#include <ncurses.h>
 #include "maze.h"
+#include "renderer.h"
 #include <algorithm>
 #include <random>
 
-Maze::Maze(int rows, int cols) 
-    : rows(rows), cols(cols), 
+Maze::Maze(int rows, int cols, bool animate) 
+    : rows(rows), cols(cols), animate(animate),
     grid(rows, std::vector<Cell>(cols)) {}
 
-void Maze::generate() {
-    carve(0,0);
-}
-
-void Maze::carve(int r, int c) {
-    grid[r][c].visited = true;
-    // Order : North, South, East, West
+void Maze::wilson(Renderer* renderer) {
+    // Dir offset: N, S, E, W
     int dr[] = {-1, 1, 0, 0};
     int dc[] = {0, 0, 1, -1};
 
-    int dirs[] = {0, 1, 2, 3};
-    std::shuffle(dirs, dirs + 4, std::mt19937{std::random_device{}()});
+    std::mt19937 rng{std::random_device{}()};
 
-    for (int i = 0; i < 4; i++) {
-        int d = dirs[i];
-        int nr = r + dr[d];
-        int nc = c + dc[d];
+    // Pick a random cell
+    int startR = rng() % rows;
+    int startC = rng() % cols;
+    grid[startR][startC].inMaze = true;
 
-        // check if neighbor is in bound and make sure it has not been visited
-        if (nr >= 0 && nr < rows && nc >= 0 &&
-            nc < cols && !grid[nr][nc].visited) {
-            if (d == 0) {
-                grid[r][c].north = false;
-                grid[nr][nc].south = false;
-            } else if (d == 1) {
-                grid[r][c].south = false;
-                grid[nr][nc].north = false;
-            } else if (d == 2) {
-                grid[r][c].east = false;
-                grid[nr][nc].west = false;
-            }else if (d == 3) { 
-                grid[r][c].west = false;
-                grid[nr][nc].east = false;
-            }
-            carve(nr, nc);
+    // track total cells
+    int cellsInMaze = 1;
+    int totalCells = rows * cols;
+    
+    // Direction each cell was exited during the current walk
+    // -1 means not part of current walk
+    std::vector<std::vector<int>> direction(rows, std::vector<int>(cols, -1));
+
+    while (cellsInMaze < totalCells) {
+        // Pick random cell not in maze
+        int r, c;
+        do {
+            r = rng() % rows;
+            c = rng() % cols;
+        } while (grid[r][c].inMaze);
+
+        int walkStartR = r;
+        int walkStartC = c;
+
+        while(!grid[r][c].inMaze) {
+            int dir;
+            int nr;
+            int nc;
+            do {
+                dir = rng() % 4;
+                nr = r + dr[dir];
+                nc = c + dc[dir];
+            } while (nr < 0 || nr >= rows || nc < 0 || nc >= cols);
+
+            direction[r][c] = dir;
+            r = nr;
+            c = nc;
         }
-    };
+
+        r = walkStartR;
+        c = walkStartC;
+        while (!grid[r][c].inMaze) {
+            int dir = direction[r][c];
+            removeWall(r, c, dir);
+            if (animate) {
+                clear();
+                renderer->drawMaze(*this);
+                refresh();
+                napms(50);
+            }
+            grid[r][c].inMaze = true;
+            cellsInMaze++;
+
+            direction[r][c] = -1;
+
+            r = r + dr[dir];
+            c = c + dc[dir];
+        }
+
+    }
+
+}
+
+void Maze::removeWall(int r, int c, int dir) {
+    int dr[] = {-1, 1, 0, 0};
+    int dc[] = {0, 0, 1, -1};
+    int nr = r + dr[dir];
+    int nc = c + dc[dir];
+
+    if (dir == 0) {
+        grid[r][c].north = false;
+        grid[nr][nc].south = false;
+    } 
+    if (dir == 1) {
+        grid[r][c].south = false; 
+        grid[nr][nc].north = false;
+    }
+    if (dir == 2) {
+        grid[r][c].east = false;
+        grid[nr][nc].west = false;
+    }
+    if (dir == 3) {
+        grid[r][c].west = false;
+        grid[nr][nc].east = false;
+    }
 }
 
 const Cell& Maze::getCell(int r, int c) const{

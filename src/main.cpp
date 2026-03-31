@@ -6,10 +6,10 @@
 #include "player.h"
 
 int main() {
-    Maze maze(25, 25);
-    maze.generate();
-    Player player(0, 0);
+    Maze maze(25, 25, true);
     Renderer renderer;
+    maze.wilson(&renderer);
+    Player player(0, 0);
     renderer.drawMaze(maze);
     renderer.drawPlayer(player.getRow(), player.getCol());
     renderer.mazeRefresh();

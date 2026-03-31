@@ -6,7 +6,11 @@ Renderer::Renderer() {
     initscr();
     curs_set(0);
     start_color();
-    init_pair(1, COLOR_BLUE, COLOR_BLACK);
+    init_pair(1, COLOR_BLUE, COLOR_BLACK); // player
+    init_pair(2, COLOR_GREEN, COLOR_BLACK); // start marker
+    init_pair(3, COLOR_RED, COLOR_BLACK); // exit marker
+    init_pair(4, COLOR_YELLOW, COLOR_BLACK); // status bar
+    init_pair(5, COLOR_MAGENTA, COLOR_BLACK); // breadcrumbs
     noecho();
     cbreak();
     keypad(stdscr, TRUE);

@@ -1,6 +1,6 @@
 #pragma once
-#include "maze.h"
 
+class Maze;
 class Renderer {
 public:
     Renderer();
