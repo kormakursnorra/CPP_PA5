@@ -5,7 +5,7 @@
 #include <vector>
 #include "cell_k.h"
 
-using MazeGrid = std::vector<std::vector<Cell*>>;
+using MazeGrid = std::vector<Cell*>;
 
 class Maze {
 private:
@@ -27,7 +27,7 @@ public:
     int getCols() const { return columns; };
     int getNumCells() const { return numCells; }
     MazeGrid& getGrid() const { return const_cast<MazeGrid&>(grid); };
-    Cell& getCell(int x, int y) const { return *grid[x][y]; }
+    Cell& getCell(int x, int y) const { return *grid[x + (y * columns)]; };
 
     std::vector<Cell*> getUnvisitedNeighbors(Cell& cell);
 };

@@ -1,4 +1,5 @@
 #include "maze_k.h"
+#include "maze.h"
 
 #include <random>
 #include <vector>
@@ -9,54 +10,19 @@
 
 Maze::Maze(int columns, int rows) 
 : columns(columns), rows(rows), randNum(std::random_device{}()) {
+    std::vector<Cell*> grid(columns * rows);
     for (int y = 0; y < rows; ++y) {
-        std::vector<Cell*> row;
         for (int x = 0; x < columns; ++x) {
-            row.push_back(new Cell(x, y));
+            int newPos    = x + y * columns;
+            Cell *newCell = new Cell(x, y, newPos);
+            grid[newPos]  = newCell;
         }
-        grid.push_back(row);
     }
 }
 
-// void Maze::carve(int r, int c) {
-//     grid[r][c]->visited = true;
-//     // Order : North, South, East, West
-//     int dr[] = {-1, 1, 0, 0};
-//     int dc[] = {0, 0, 1, -1};
-
-//     int dirs[] = {0, 1, 2, 3};
-//     std::shuffle(dirs, dirs + 4, std::mt19937{std::random_device{}()});
-
-//     for (int i = 0; i < 4; i++) {
-//         int d = dirs[i];
-//         int nr = r + dr[d];
-//         int nc = c + dc[d];
-
-//         // check if neighbor is in bound and make sure it has not been visited
-//         if (nr >= 0 && nr < rows && nc >= 0 &&
-//             nc < cols && !grid[nr][nc].visited) {
-//             if (d == 0) {
-//                 grid[r][c].north = false;
-//                 grid[nr][nc].south = false;
-//             } else if (d == 1) {
-//                 grid[r][c].south = false;
-//                 grid[nr][nc].north = false;
-//             } else if (d == 2) {
-//                 grid[r][c].east = false;
-//                 grid[nr][nc].west = false;
-//             }else if (d == 3) { 
-//                 grid[r][c].west = false;
-//                 grid[nr][nc].east = false;
-//             }
-//             carve(nr, nc);
-//         }
-//     };
-// }
-
-
 void Maze::generateMaze() {
     std::vector<Cell*> stack;
-    Cell* current = grid[0][0];
+    Cell* current = grid[0];
     current->visited = true;
     
     while (true) {
@@ -86,10 +52,11 @@ void Maze::generateMaze() {
 
 std::vector<Cell*> Maze::getUnvisitedNeighbors(Cell& cell) {
     std::vector<Cell*> neighbors;   
-    int x = cell.getX(); 
-    int y = cell.getY();
+    int cellX   = cell.getX();
+    int cellY   = cell.getY();
+    int cellPos = cell.getPos();
 
-    if (y > 0 && !grid[x][y - 1]->visited) {
+    if (cellPos > 0 && !grid[x + (y - 1 * columns)]->visited) {
         neighbors.push_back(grid[x][y - 1]);
     }
     if (y < rows - 1 && !grid[x][y + 1]->visited) {
