@@ -8,7 +8,7 @@
 
 
 Maze::Maze(int width, int height) 
-: width(width), height(height), randNum(std::random_device()()) {
+: width(width), height(height), randNum(std::random_device{}()) {
     for (int y = 0; y < height; ++y) {
         std::vector<Cell> row;
         for (int x = 0; x < width; ++x) {
@@ -17,6 +17,42 @@ Maze::Maze(int width, int height)
         grid.push_back(row);
     }
 }
+
+// void Maze::carve(int r, int c) {
+//     grid[r][c].visited = true;
+//     // Order : North, South, East, West
+//     int dr[] = {-1, 1, 0, 0};
+//     int dc[] = {0, 0, 1, -1};
+
+//     int dirs[] = {0, 1, 2, 3};
+//     std::shuffle(dirs, dirs + 4, std::mt19937{std::random_device{}()});
+
+//     for (int i = 0; i < 4; i++) {
+//         int d = dirs[i];
+//         int nr = r + dr[d];
+//         int nc = c + dc[d];
+
+//         // check if neighbor is in bound and make sure it has not been visited
+//         if (nr >= 0 && nr < rows && nc >= 0 &&
+//             nc < cols && !grid[nr][nc].visited) {
+//             if (d == 0) {
+//                 grid[r][c].north = false;
+//                 grid[nr][nc].south = false;
+//             } else if (d == 1) {
+//                 grid[r][c].south = false;
+//                 grid[nr][nc].north = false;
+//             } else if (d == 2) {
+//                 grid[r][c].east = false;
+//                 grid[nr][nc].west = false;
+//             }else if (d == 3) { 
+//                 grid[r][c].west = false;
+//                 grid[nr][nc].east = false;
+//             }
+//             carve(nr, nc);
+//         }
+//     };
+// }
+
 
 void Maze::generateMaze() {
     std::vector<Cell*> stack;
