@@ -6,7 +6,7 @@
 #include "player.h"
 
 int main() {
-    Maze maze(25, 25, true);
+    Maze maze(25, 25);
     Renderer renderer;
     maze.wilson(&renderer);
     Player player(0, 0);
