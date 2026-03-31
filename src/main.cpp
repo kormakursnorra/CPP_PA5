@@ -10,6 +10,7 @@ int main() {
     Renderer renderer;
     maze.wilson(&renderer);
     Player player(0, 0, maze.getRows(), maze.getCols());
+    // Draw everything once before loop
     renderer.drawMaze(maze);
     renderer.drawStart(0, 0);
     renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
@@ -33,16 +34,22 @@ int main() {
         }
 
         if (dr != 0 || dc != 0) {
-            player.move(dr, dc, maze);
+            int oldRow = player.getRow();
+            int oldCol = player.getCol();
+
+            if (player.move(dr, dc, maze)) {
+                mvaddch(oldRow * 2 + 1, oldCol * 3 + 1, '.' | COLOR_PAIR(4));
+
+                if (oldRow == 0 && oldCol == 0) {
+                    renderer.drawStart(0,0);
+                } if (oldRow == maze.getExitRow() && oldCol == maze.getExitCol()) {
+                    renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
+                }
+
+                renderer.drawPlayer(player.getRow(), player.getCol());
+            }
         }
 
-        // redraw maze
-        clear();
-        renderer.drawMaze(maze);
-        renderer.drawBreadcrumbs(player, maze);
-        renderer.drawStart(0, 0);
-        renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
-        renderer.drawPlayer(player.getRow(), player.getCol());
         renderer.mazeRefresh();
 
         if (player.getRow() == maze.getExitRow() &&
