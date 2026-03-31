@@ -1,8 +1,8 @@
+#include <ctime>
 #include <iostream>
 #include <ncurses.h>
-#include <ctime>
 
-#include "maze_k.h"
+#include "maze.h"
 #include "renderer_k.h"
 #include "player_k.h"
 

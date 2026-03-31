@@ -1,5 +1,5 @@
-#include "player.h"
 #include "maze.h"
+#include "player_k.h"
 
 Player::Player(int startRow, int startCol, int mazeRows, int mazeCols) 
     : row(startRow), col(startCol), mistakes(0),

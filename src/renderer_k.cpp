@@ -1,7 +1,7 @@
-#include "renderer.h"
 #include "maze.h"
 #include "ncurses.h"
-#include "player.h"
+#include "player_k.h"
+#include "renderer_k.h"
 
 Renderer::Renderer() {
     initscr();

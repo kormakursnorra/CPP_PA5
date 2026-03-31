@@ -1,5 +1,4 @@
 #include "maze_k.h"
-#include "maze.h"
 
 #include <random>
 #include <vector>

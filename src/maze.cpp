@@ -1,9 +1,10 @@
-#include <iostream>
-#include <ncurses.h>
 #include "maze.h"
-#include "renderer.h"
-#include <algorithm>
 #include <random>
+#include <iostream>
+#include <algorithm>
+
+#include <ncurses.h>
+#include "renderer_k.h"
 
 Maze::Maze(int rows, int cols, bool animate) 
     : rows(rows), cols(cols), animate(animate),
