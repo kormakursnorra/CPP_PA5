@@ -138,3 +138,9 @@ void Renderer::drawBreadcrumbs(const Player& player, const Maze& maze) {
         }
     }
 }
+
+void Renderer::drawStatus(int row, int mistakes, int timeLeft) {
+    mvprintw(row, 0, "Mistakes: %d | Time: %02d:%02d",
+    mistakes, timeLeft / 60, timeLeft % 60 );
+    clrtoeol();
+}

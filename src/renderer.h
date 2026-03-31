@@ -12,4 +12,5 @@ public:
     void drawStart(int r, int c);
     void drawEnd(int r, int c);
     void drawBreadcrumbs(const Player& player, const Maze& maze);
+    void drawStatus(int row, int mistakes, int timeLeft);
 };
