@@ -43,11 +43,11 @@ void MazeNavigator::findEscapePath(const Cell& startCell, const Cell& exitCell) 
             int nextX = currCell.getX() + directions[i][1];
             
             if (0 <= nextY && nextY < rows && 0 <= nextX && nextX < cols) {
-                int nextPos         = nextX + nextY;
-                const Cell nextCell = maze.getCell(nextX, nextY);
+                int nextPos         = nextX + (nextY * cols);
+                const Cell nextCell = maze.getCell(nextPos);
 
                 if (!visited[nextPos]) {
-                    visited[nextCell.getPos()] = true;
+                    visited[nextPos] = true;
                     escapePath.push_back(nextCell);
                     queue.push(nextCell);
                 }

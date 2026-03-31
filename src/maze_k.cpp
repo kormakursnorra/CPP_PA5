@@ -9,8 +9,8 @@
 
 
 Maze::Maze(int columns, int rows) 
-: columns(columns), rows(rows), randNum(std::random_device{}()) {
-    std::vector<Cell*> grid(columns * rows);
+: columns(columns), rows(rows), numCells(columns * rows), randNum(std::random_device{}()) {
+    std::vector<Cell*> grid(numCells);
     for (int y = 0; y < rows; ++y) {
         for (int x = 0; x < columns; ++x) {
             int newPos    = x + y * columns;
