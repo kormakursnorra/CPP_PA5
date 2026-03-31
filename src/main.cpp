@@ -9,8 +9,10 @@ int main() {
     Maze maze(25, 25);
     Renderer renderer;
     maze.wilson(&renderer);
-    Player player(0, 0);
+    Player player(0, 0, maze.getRows(), maze.getCols());
     renderer.drawMaze(maze);
+    renderer.drawStart(0, 0);
+    renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
     renderer.drawPlayer(player.getRow(), player.getCol());
     renderer.mazeRefresh();
 
@@ -37,11 +39,14 @@ int main() {
         // redraw maze
         clear();
         renderer.drawMaze(maze);
+        renderer.drawBreadcrumbs(player, maze);
+        renderer.drawStart(0, 0);
+        renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
         renderer.drawPlayer(player.getRow(), player.getCol());
         renderer.mazeRefresh();
 
-        if (player.getRow() == maze.getRows() - 1 &&
-            player.getCol() == maze.getCols() - 1) {
+        if (player.getRow() == maze.getExitRow() &&
+            player.getCol() == maze.getExitCol()) {
                 clear();
                 mvprintw(maze.getRows() + 2, 0, "You Win! Mistakes: %d", player.getMistakes());
                 renderer.mazeRefresh();

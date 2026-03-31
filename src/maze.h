@@ -18,9 +18,14 @@ public:
     const Cell& getCell(int r, int c) const;
     int getRows() const;
     int getCols() const;
+    int getExitRow() const;
+    int getExitCol() const;
 
 private:
-    int rows, cols;
+    int rows;
+    int cols;
+    int exitRow;
+    int exitCol;
     bool animate;
     std::vector<std::vector<Cell>> grid;
     void removeWall(int r, int c, int dir);

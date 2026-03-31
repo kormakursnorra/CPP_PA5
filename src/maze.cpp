@@ -77,6 +77,8 @@ void Maze::wilson(Renderer* renderer) {
 
     }
 
+    exitRow = rows - 1;
+    exitCol = cols - 1;
 }
 
 void Maze::removeWall(int r, int c, int dir) {
@@ -113,4 +115,12 @@ int Maze::getRows() const {
 
 int Maze::getCols() const {
     return cols;
+}
+
+int Maze::getExitRow() const {
+    return exitRow;
+}
+
+int Maze::getExitCol() const {
+    return exitCol;
 }
