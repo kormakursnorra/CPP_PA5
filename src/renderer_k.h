@@ -1,9 +1,7 @@
-// #pragma once
-#ifndef RENDERED_K_H
-#define RENDERED_K_H
+#pragma once
 
-#include "maze_k.h"
-
+class Maze;
+class Player;
 class Renderer {
 public:
     Renderer();
@@ -11,6 +9,8 @@ public:
     void drawMaze(const Maze& maze);
     void drawPlayer(int r, int c);
     void mazeRefresh();
+    void drawStart(int r, int c);
+    void drawEnd(int r, int c);
+    void drawBreadcrumbs(const Player& player, const Maze& maze);
+    void drawStatus(int row, int mistakes, int timeLeft);
 };
-
-#endif

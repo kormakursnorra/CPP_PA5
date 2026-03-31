@@ -1,29 +1,30 @@
-#include "maze_k.h"
-#include "player_k.h"
+#include "player.h"
+#include "maze.h"
 
-Player::Player(int startRow, int startCol) {
-    row = startRow;
-    col = startCol;
-    mistakes = 0;
-}
+Player::Player(int startRow, int startCol, int mazeRows, int mazeCols) 
+    : row(startRow), col(startCol), mistakes(0),
+    visited(mazeRows, std::vector<bool>(mazeCols, false)) {
+        visited[startRow][startCol] = true;
+    }
 
 bool Player::move(int dr, int dc, const Maze& maze) {
     const Cell& cell = maze.getCell(row, col);
-    if (dr == -1 && cell.walls.north) {
+    if (dr == -1 && cell.north) {
         mistakes++;
         return false;
-    } else if (dr == 1 && cell.walls.south) {
+    } else if (dr == 1 && cell.south) {
         mistakes++;
         return false;
-    } else if (dc == 1 && cell.walls.east) {
+    } else if (dc == 1 && cell.east) {
         mistakes++;
         return false;
-    } else if (dc == -1 && cell.walls.west) {
+    } else if (dc == -1 && cell.west) {
         mistakes++;
         return false;
     }
     row += dr;
     col += dc;
+    visited[row][col] = true;
     return true;
 }
 
@@ -37,4 +38,8 @@ int Player::getCol() const {
 
 int Player::getMistakes() const {
     return mistakes;
+}
+
+bool Player::hasVisited(int r, int c) const {
+    return visited[r][c];
 }
