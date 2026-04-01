@@ -39,8 +39,10 @@ private:
     MazeGrid grid;
     Path escapePath;
     const int directions[4][2] = {
-        {0, 1}, {1, 0}, 
-        {0, -1}, {-1, 0}
+        {-1, 0},  // 0: North
+        { 1, 0},  // 1: South
+        { 0, 1},  // 2: East
+        { 0,-1}   // 3: West
     };
     
     void removeWall(int r, int c, int dir);

@@ -1,5 +1,4 @@
 #include <ctime>
-#include <iostream>
 #include <ncurses.h>
 
 #include "maze.h"
@@ -7,6 +6,22 @@
 #include "player_k.h"
 #include "renderer_k.h"
 
+
+int calculateScore(Difficulty diff, int timeLimit, int timeTaken, int mistakes) {
+    auto getBase = [&](Difficulty diff) -> int {
+        switch(diff) {
+            case Difficulty::EASY:      return 1000;
+            case Difficulty::MEDIUM:    return 2000;
+            case Difficulty::HARD:      return 3000;
+            case Difficulty::NO_ESCAPE: return 4000;
+        } return 1000;
+
+    };
+
+    float timeBonus   = std::max(0.1f, (float)(timeLimit - timeTaken) / timeLimit);
+    float mistakePen  = 1.0f / (1.0f + mistakes);
+    return (int)(getBase(diff) * timeBonus * mistakePen);
+}
 
 bool runGame(Renderer& renderer, Difficulty diff) {
     DifficultyConfig cfg = getDifficultyConfig(diff);
@@ -40,10 +55,10 @@ bool runGame(Renderer& renderer, Difficulty diff) {
             renderer.drawEscapePath(maze);
  
             timeout(-1);
-            // clear();
-            // mvprintw(cfg.rows + 2, 0,
-                // "Time's up! You lose. Mistakes: %d -- Press any key...",
-                // player.getMistakes());
+            clear();
+            mvprintw(cfg.rows + 2, 0,
+                "Time's up! You lose. Mistakes: %d -- Press any key...",
+                player.getMistakes());
             renderer.mazeRefresh();
             getch();
             return false;
@@ -88,8 +103,10 @@ bool runGame(Renderer& renderer, Difficulty diff) {
             player.getCol() == maze.getExitCol()) {
                 timeout(-1);
                 clear();
-                int finalScore = 100 > (player.getMistakes() + timeLeft) ? 
-                                100 - (player.getMistakes() + timeLeft) : 0;
+                int timeTaken = cfg.timeLimit - timeLeft;
+                int finalScore = calculateScore(
+                    diff, cfg.timeLimit, timeTaken, 
+                    player.getMistakes());
                 mvprintw(cfg.rows + 2, 0,
                     "You Win! Final Score: %d -- Press any key...",
                     finalScore);
