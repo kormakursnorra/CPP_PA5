@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include <memory>
 #include <random>
-#include <stdexcept>
 
 #include "renderer_k.h"
 
@@ -44,14 +43,14 @@ void Maze::wilson(Renderer* renderer) {
         do {
             r = rng() % rows;
             c = rng() % cols;
-        } while (grid[c + (r * cols)]->inMaze);
+        } while (grid.at(c + (r * cols))->inMaze);
 
         int walkStartR = r;
         int walkStartC = c;
 
         std::fill(direction.begin(), direction.end(), -1);
 
-        while(!grid[c + (r * cols)]->inMaze) {
+        while(!grid.at(c + (r * cols))->inMaze) {
             int dir;
             int nr;
             int nc;
@@ -61,15 +60,15 @@ void Maze::wilson(Renderer* renderer) {
                 nc = c + dc[dir];
             } while (nr < 0 || nr >= rows || nc < 0 || nc >= cols);
 
-            direction[c + (r * cols)] = dir;
+            direction.at(c + (r * cols)) = dir;
             r = nr;
             c = nc;
         }
 
         r = walkStartR;
         c = walkStartC;
-        while (!grid[c + (r * cols)]->inMaze) {
-            int dir = direction[c + (r * cols)];
+        while (!grid.at(c + (r * cols))->inMaze) {
+            int dir = direction.at(c + (r * cols));
             removeWall(r, c, dir);
             if (animate) {
                 clear();
@@ -77,10 +76,10 @@ void Maze::wilson(Renderer* renderer) {
                 refresh();
                 napms(50);
             }
-            grid[c + (r * cols)]->inMaze = true;
+            grid.at(c + (r * cols))->inMaze = true;
             cellsInMaze++;
 
-            direction[c + (r * cols)] = -1;
+            direction.at(c + (r * cols)) = -1;
 
             r = r + dr[dir];
             c = c + dc[dir];
@@ -100,28 +99,30 @@ void Maze::removeWall(int r, int c, int dir) {
     int nc = c + dc[dir];
 
     if (dir == 0) {
-        grid[c + (r * cols)]->north = false;
-        grid[nc + (nr * cols)]->south = false;
+        grid.at(c + (r * cols))->north = false;
+        grid.at(nc + (nr * cols))->south = false;
     } 
     if (dir == 1) {
-        grid[c + (r * cols)]->south = false; 
-        grid[nc + (nr * cols)]->north = false;
+        grid.at(c + (r * cols))->south = false; 
+        grid.at(nc + (nr * cols))->north = false;
     }
     if (dir == 2) {
-        grid[c + (r * cols)]->east = false;
-        grid[nc + (nr * cols)]->west = false;
+        grid.at(c + (r * cols))->east = false;
+        grid.at(nc + (nr * cols))->west = false;
     }
     if (dir == 3) {
-        grid[c + (r * cols)]->west = false;
-        grid[nc + (nr * cols)]->east = false;
+        grid.at(c + (r * cols))->west = false;
+        grid.at(nc + (nr * cols))->east = false;
     }
 }
 
 void Maze::findEscapePath(const Cell& startCell, const Cell& exitCell) {
     std::queue<std::reference_wrapper<const Cell>> queue;             
     std::vector<int> parent(rows * cols, -1);
+    std::vector<bool> visited(rows * cols, false);
     
-    parent[startCell.getCellPos()] = startCell.getCellPos();
+    parent[startCell.getCellPos()]  = startCell.getCellPos();
+    visited[startCell.getCellPos()] = true;
     queue.push(startCell);
 
     while (!queue.empty()) {
@@ -141,7 +142,8 @@ void Maze::findEscapePath(const Cell& startCell, const Cell& exitCell) {
             
             if (0 <= nextRow && nextRow < rows && 0 <= nextCol && nextCol < cols) {
                 int nextPos = nextCol + (nextRow * cols);
-                if (parent[nextPos] == -1) {
+                if (!visited[nextPos]) {
+                    visited[nextPos] = true;
                     parent[nextPos] = currCell.getCellPos();
                     queue.push(*grid[nextPos]);
                 }
@@ -151,7 +153,11 @@ void Maze::findEscapePath(const Cell& startCell, const Cell& exitCell) {
     escapePath.clear();
     int pos = exitCell.getCellPos();
     while (pos != startCell.getCellPos()) {
-        escapePath.push_back(*grid[pos]);
+        if (parent[pos] == -1) {
+            escapePath.clear();
+            return;
+        }
+        escapePath.push_back(*grid.at(pos));
         pos = parent[pos];
     }
     escapePath.push_back(startCell);

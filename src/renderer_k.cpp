@@ -21,8 +21,8 @@ void Renderer::drawMaze(const Maze& maze) {
     int rows = maze.getRows();
     int cols = maze.getCols();
     // draw coners
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
+    for (int i = 0; i <= rows; i++) {
+        for (int j = 0; j <= cols; j++) {
             bool right = false;
             if (j < cols) {
                 if (i == 0 || i == rows) {

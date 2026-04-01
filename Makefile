@@ -1,5 +1,5 @@
 CXX						:=	g++
-CXXFLAGS	:=	-std=c++17	-g	-Isrc	-Wall	-Werror	-Wextra	-fsanitize=address	-MMD	-MP
+CXXFLAGS	:=	-std=c++17	-g	-Isrc	-Wall	-Werror	-Wextra	-fsanitize=address -fno-omit-frame-pointer	-MMD	-MP
 LDFLAGS		:=	-lncurses
 
 SRC_DIR			:=	src

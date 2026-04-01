@@ -1,5 +1,8 @@
 #include <ctime>
+#include <limits>
 #include <ncurses.h>
+#include <stdexcept>
+#include <iostream>
 
 #include "maze.h"
 #include "player_k.h"
