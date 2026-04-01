@@ -142,3 +142,44 @@ void Renderer::drawStatus(int row, int mistakes, int timeLeft) {
     mistakes, timeLeft / 60, timeLeft % 60 );
     clrtoeol();
 }
+
+void Renderer::drawEscapePath(const Maze& maze) {
+    const Path& path = maze.getEscapePath();
+    if (path.empty()) return;
+ 
+    init_pair(5, COLOR_YELLOW, COLOR_BLACK);
+ 
+    for (int i = 0; i < (int)path.size(); ++i) {
+        const Cell& cell = path[i].get();
+        int r = cell.getCellRow();
+        int c = cell.getCellCol();
+ 
+        attron(COLOR_PAIR(5) | A_BOLD);
+        mvaddch(r * 2 + 1, c * 3 + 1, '*');
+        attroff(COLOR_PAIR(5) | A_BOLD);
+ 
+        if (i + 1 < (int)path.size()) {
+            const Cell& next = path[i + 1].get();
+            int nr = next.getCellRow();
+            int nc = next.getCellCol();
+ 
+            // Horizontal passage
+            if (r == nr) {
+                int passCol = (c < nc) ? c * 3 + 2 : nc * 3 + 2;
+                attron(COLOR_PAIR(5));
+                mvaddch(r * 2 + 1, passCol, ACS_HLINE);
+                attroff(COLOR_PAIR(5));
+            }
+            // Vertical passage
+            if (c == nc) {
+                int passRow = (r < nr) ? r * 2 + 2 : nr * 2 + 2;
+                attron(COLOR_PAIR(5));
+                mvaddch(passRow, c * 3 + 1, ACS_VLINE);
+                attroff(COLOR_PAIR(5));
+            }
+        }
+ 
+        refresh();
+        napms(80);
+    }
+}
