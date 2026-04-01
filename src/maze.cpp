@@ -26,7 +26,7 @@ void Maze::wilson(Renderer* renderer) {
     // Pick a random cell
     int startR = rng() % rows;
     int startC = rng() % cols;
-    grid[startR + (startC * cols)]->inMaze = true;
+    grid[startC + (startR * cols)]->inMaze = true;
 
     // track total cells
     int cellsInMaze = 1;
@@ -34,7 +34,7 @@ void Maze::wilson(Renderer* renderer) {
     
     // Direction each cell was exited during the current walk
     // -1 means not part of current walk
-    std::vector<std::vector<int>> direction(rows, std::vector<int>(cols, -1));
+    std::vector<int> direction(rows * cols, -1);
 
     while (cellsInMaze < totalCells) {
         // Pick random cell not in maze
@@ -57,7 +57,7 @@ void Maze::wilson(Renderer* renderer) {
                 nc = c + dc[dir];
             } while (nr < 0 || nr >= rows || nc < 0 || nc >= cols);
 
-            direction[r][c] = dir;
+            direction[c + (r * cols)] = dir;
             r = nr;
             c = nc;
         }
@@ -65,7 +65,7 @@ void Maze::wilson(Renderer* renderer) {
         r = walkStartR;
         c = walkStartC;
         while (!grid[c + (r * cols)]->inMaze) {
-            int dir = direction[r][c];
+            int dir = direction[c + (r * cols)];
             removeWall(r, c, dir);
             if (animate) {
                 clear();
@@ -76,7 +76,7 @@ void Maze::wilson(Renderer* renderer) {
             grid[c + (r * cols)]->inMaze = true;
             cellsInMaze++;
 
-            direction[r][c] = -1;
+            direction[c + (r * cols)] = -1;
 
             r = r + dr[dir];
             c = c + dc[dir];
