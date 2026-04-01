@@ -1,4 +1,5 @@
 #include "maze.h"
+#include <memory>
 #include <random>
 #include <iostream>
 #include <algorithm>
@@ -7,8 +8,7 @@
 #include "renderer_k.h"
 
 Maze::Maze(int rows, int cols, bool animate) 
-    : rows(rows), cols(cols), animate(animate),
-    grid(rows, std::vector<Cell>(cols)) {}
+    : rows(rows), cols(cols), animate(animate), grid(rows * cols) {}
 
 void Maze::wilson(Renderer* renderer) {
     // Dir offset: N, S, E, W
@@ -20,7 +20,7 @@ void Maze::wilson(Renderer* renderer) {
     // Pick a random cell
     int startR = rng() % rows;
     int startC = rng() % cols;
-    grid[startR][startC].inMaze = true;
+    grid[startR + (startC * cols)]->inMaze = true;
 
     // track total cells
     int cellsInMaze = 1;
@@ -36,12 +36,12 @@ void Maze::wilson(Renderer* renderer) {
         do {
             r = rng() % rows;
             c = rng() % cols;
-        } while (grid[r][c].inMaze);
+        } while (grid[r + (c * cols)]->inMaze);
 
         int walkStartR = r;
         int walkStartC = c;
 
-        while(!grid[r][c].inMaze) {
+        while(!grid[r + (c * cols)]->inMaze) {
             int dir;
             int nr;
             int nc;
@@ -58,7 +58,7 @@ void Maze::wilson(Renderer* renderer) {
 
         r = walkStartR;
         c = walkStartC;
-        while (!grid[r][c].inMaze) {
+        while (!grid[r + (c * cols)]->inMaze) {
             int dir = direction[r][c];
             removeWall(r, c, dir);
             if (animate) {
@@ -67,7 +67,7 @@ void Maze::wilson(Renderer* renderer) {
                 refresh();
                 napms(50);
             }
-            grid[r][c].inMaze = true;
+            grid[r + (c * cols)]->inMaze = true;
             cellsInMaze++;
 
             direction[r][c] = -1;
@@ -89,39 +89,19 @@ void Maze::removeWall(int r, int c, int dir) {
     int nc = c + dc[dir];
 
     if (dir == 0) {
-        grid[r][c].north = false;
-        grid[nr][nc].south = false;
+        grid[r + (c * cols)]->north = false;
+        grid[nr + (nc * cols)]->south = false;
     } 
     if (dir == 1) {
-        grid[r][c].south = false; 
-        grid[nr][nc].north = false;
+        grid[r + (c * cols)]->south = false; 
+        grid[nr + (nc * cols)]->north = false;
     }
     if (dir == 2) {
-        grid[r][c].east = false;
-        grid[nr][nc].west = false;
+        grid[r + (c * cols)]->east = false;
+        grid[nr + (nc * cols)]->west = false;
     }
     if (dir == 3) {
-        grid[r][c].west = false;
-        grid[nr][nc].east = false;
+        grid[r + (c * cols)]->west = false;
+        grid[nr + (nc * cols)]->east = false;
     }
-}
-
-const Cell& Maze::getCell(int r, int c) const{
-    return grid[r][c];
-}
-
-int Maze::getRows() const {
-    return rows;
-}
-
-int Maze::getCols() const {
-    return cols;
-}
-
-int Maze::getExitRow() const {
-    return exitRow;
-}
-
-int Maze::getExitCol() const {
-    return exitCol;
 }

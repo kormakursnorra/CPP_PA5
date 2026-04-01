@@ -1,11 +1,12 @@
 #ifndef MAZE_K_H
 #define MAZE_K_H
 
+#include <memory>
 #include <random>
 #include <vector>
 #include "cell_k.h"
 
-using MazeGrid = std::vector<Cell*>;
+using MazeGrid = std::vector<std::unique_ptr<Cell>>;
 
 class Maze {
 private:
