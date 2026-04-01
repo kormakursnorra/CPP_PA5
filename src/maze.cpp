@@ -1,6 +1,8 @@
 #include "maze.h"
+#include <cstdlib>
 #include <memory>
 #include <random>
+#include <stdexcept>
 
 #include "renderer_k.h"
 
@@ -46,6 +48,8 @@ void Maze::wilson(Renderer* renderer) {
 
         int walkStartR = r;
         int walkStartC = c;
+
+        std::fill(direction.begin(), direction.end(), -1);
 
         while(!grid[c + (r * cols)]->inMaze) {
             int dir;
@@ -115,14 +119,9 @@ void Maze::removeWall(int r, int c, int dir) {
 
 void Maze::findEscapePath(const Cell& startCell, const Cell& exitCell) {
     std::queue<std::reference_wrapper<const Cell>> queue;             
-    int numCells = rows * cols;
-    bool visited[numCells];
-    for (int i = 0; i < numCells; ++i) {
-        visited[i] = false;
-    }
+    std::vector<int> parent(rows * cols, -1);
     
-    visited[startCell.getCellPos()] = true;
-    escapePath.push_back(startCell);
+    parent[startCell.getCellPos()] = startCell.getCellPos();
     queue.push(startCell);
 
     while (!queue.empty()) {
@@ -134,23 +133,27 @@ void Maze::findEscapePath(const Cell& startCell, const Cell& exitCell) {
         for (int i = 0; i < 4; ++i) {
             if (currCell.north && i == 0) continue;
             if (currCell.south && i == 1) continue;
-            if (currCell.east && i == 2) continue;                
-            if (currCell.west && i == 3) continue;
+            if (currCell.east  && i == 2) continue;                
+            if (currCell.west  && i == 3) continue;
             
             int nextRow = currCell.getCellRow() + directions[i][0];
             int nextCol = currCell.getCellCol() + directions[i][1];
             
             if (0 <= nextRow && nextRow < rows && 0 <= nextCol && nextCol < cols) {
-                int nextPos         = nextCol + (nextRow * cols);
-                const Cell& nextCell = *grid[nextCol + (nextRow * cols)];
-
-                if (!visited[nextPos]) {
-                    visited[nextPos] = true;
-                    escapePath.push_back(nextCell);
-                    queue.push(nextCell);
+                int nextPos = nextCol + (nextRow * cols);
+                if (parent[nextPos] == -1) {
+                    parent[nextPos] = currCell.getCellPos();
+                    queue.push(*grid[nextPos]);
                 }
             }
         }
     }
+    escapePath.clear();
+    int pos = exitCell.getCellPos();
+    while (pos != startCell.getCellPos()) {
+        escapePath.push_back(*grid[pos]);
+        pos = parent[pos];
+    }
+    escapePath.push_back(startCell);
     std::reverse(escapePath.begin(), escapePath.end());
 }

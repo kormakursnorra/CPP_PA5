@@ -6,7 +6,7 @@
 #include "renderer_k.h"
 
 int main() {
-    Maze maze(25, 25);
+    Maze maze(15, 15, true);
     Renderer renderer;
     maze.wilson(&renderer);
     Player player(0, 0, maze.getRows(), maze.getCols());

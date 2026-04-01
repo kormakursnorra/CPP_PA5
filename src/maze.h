@@ -57,7 +57,7 @@ public:
     int getExitRow() const { return exitRow; };
     int getExitCol() const { return exitCol; };
     
-    const Cell&     getCell(int r, int c) const { return *grid[r + (c * cols)]; };
+    const Cell&     getCell(int r, int c) const { return *grid[c + (r * cols)]; };
     const MazeGrid& getGrid() const { return const_cast<MazeGrid&>(grid); };
     const Path      getEscapePath() const { return escapePath; }
 };
