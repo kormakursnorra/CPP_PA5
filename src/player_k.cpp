@@ -1,4 +1,3 @@
-#include "maze.h"
 #include "player_k.h"
 
 Player::Player(int startRow, int startCol, int mazeRows, int mazeCols) 

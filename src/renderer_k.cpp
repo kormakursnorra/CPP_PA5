@@ -1,6 +1,3 @@
-#include "maze.h"
-#include "ncurses.h"
-#include "player_k.h"
 #include "renderer_k.h"
 
 Renderer::Renderer() {
@@ -130,9 +127,10 @@ void Renderer::drawEnd(int r, int c) {
 }
 
 void Renderer::drawBreadcrumbs(const Player& player, const Maze& maze) {
-    for (int r = 0; r < maze.getRows(); r++) {
-        for (int c = 0; c < maze.getCols(); c++) {
-            if (player.hasVisited(r, c)) {
+    int rows = maze.getRows(), cols = maze.getCols();
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            if (player.hasVisited(r, c, cols)) {
                 mvaddch(r * 2 + 1, c * 3 + 1, '.' | COLOR_PAIR(4));
             }
         }

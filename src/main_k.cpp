@@ -1,10 +1,9 @@
 #include <ctime>
-#include <iostream>
 #include <ncurses.h>
 
 #include "maze.h"
-#include "renderer_k.h"
 #include "player_k.h"
+#include "renderer_k.h"
 
 int main() {
     Maze maze(25, 25);

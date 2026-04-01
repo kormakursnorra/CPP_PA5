@@ -1,9 +1,10 @@
 #pragma once
+
+#include <queue>
 #include <vector>
 #include <memory>
-// #include "cell.h"
-
-
+#include <ncurses.h>
+#include <functional>
 
 class Renderer;
 
@@ -28,6 +29,7 @@ struct Cell {
 };
 
 using MazeGrid = std::vector<std::unique_ptr<Cell>>; 
+using Path = std::vector<std::reference_wrapper<const Cell>>;
 class Maze {
 private:
     int rows;
@@ -36,17 +38,26 @@ private:
     int exitCol;
     bool animate;
     MazeGrid grid;
+    Path escapePath;
+    const int directions[4][2] = {
+        {0, 1}, {1, 0}, 
+        {0, -1}, {-1, 0}
+    };
     
     void removeWall(int r, int c, int dir);
+    void findEscapePath(const Cell& startCell, const Cell& exitCell);
 
 public:
     Maze(int rows, int cols, bool animate = false);
     void wilson(Renderer* renderer = nullptr);
+
     
     int getRows() const { return rows; };
     int getCols() const { return cols; };
     int getExitRow() const { return exitRow; };
     int getExitCol() const { return exitCol; };
-    const Cell& getCell(int r, int c) const { return *grid[r + (c * cols)]; };
+    
+    const Cell&     getCell(int r, int c) const { return *grid[r + (c * cols)]; };
     const MazeGrid& getGrid() const { return const_cast<MazeGrid&>(grid); };
+    const Path      getEscapePath() const { return escapePath; }
 };

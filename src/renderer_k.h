@@ -1,7 +1,9 @@
 #pragma once
+#include "maze.h"
+#include "ncurses.h"
+#include "player_k.h"
+#include "renderer_k.h"
 
-class Maze;
-class Player;
 class Renderer {
 public:
     Renderer();

@@ -1,23 +1,20 @@
 #include "maze.h"
 #include <memory>
 #include <random>
-#include <iostream>
-#include <algorithm>
 
-#include <ncurses.h>
 #include "renderer_k.h"
 
 Maze::Maze(int rows, int cols, bool animate) 
-    : rows(rows), cols(cols), animate(animate) 
-    {
-        grid.reserve(rows * cols);
-        for (int r = 0; r < rows; ++r) {
-            for (int c = 0; c < cols; ++c) {
-                grid.push_back(std::make_unique<Cell>(
-                    r, c, c + r * cols));
-            }
+    : rows(rows), cols(cols), animate(animate) {
+    
+    grid.reserve(rows * cols);
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            grid.push_back(std::make_unique<Cell>(
+                r, c, c + r * cols));
         }
     }
+}
 
 void Maze::wilson(Renderer* renderer) {
     // Dir offset: N, S, E, W
@@ -89,6 +86,7 @@ void Maze::wilson(Renderer* renderer) {
 
     exitRow = rows - 1;
     exitCol = cols - 1;
+    findEscapePath(*grid[0], *grid[exitCol + (exitRow * cols)]);
 }
 
 void Maze::removeWall(int r, int c, int dir) {
@@ -113,4 +111,46 @@ void Maze::removeWall(int r, int c, int dir) {
         grid[c + (r * cols)]->west = false;
         grid[nc + (nr * cols)]->east = false;
     }
+}
+
+void Maze::findEscapePath(const Cell& startCell, const Cell& exitCell) {
+    std::queue<std::reference_wrapper<const Cell>> queue;             
+    int numCells = rows * cols;
+    bool visited[numCells];
+    for (int i = 0; i < numCells; ++i) {
+        visited[i] = false;
+    }
+    
+    visited[startCell.getCellPos()] = true;
+    escapePath.push_back(startCell);
+    queue.push(startCell);
+
+    while (!queue.empty()) {
+        const Cell& currCell = queue.front();
+        queue.pop();
+        
+        if (currCell.getCellPos() == exitCell.getCellPos()) return;
+       
+        for (int i = 0; i < 4; ++i) {
+            if (currCell.north && i == 0) continue;
+            if (currCell.south && i == 1) continue;
+            if (currCell.east && i == 2) continue;                
+            if (currCell.west && i == 3) continue;
+            
+            int nextRow = currCell.getCellRow() + directions[i][0];
+            int nextCol = currCell.getCellCol() + directions[i][1];
+            
+            if (0 <= nextRow && nextRow < rows && 0 <= nextCol && nextCol < cols) {
+                int nextPos         = nextCol + (nextRow * cols);
+                const Cell& nextCell = *grid[nextCol + (nextRow * cols)];
+
+                if (!visited[nextPos]) {
+                    visited[nextPos] = true;
+                    escapePath.push_back(nextCell);
+                    queue.push(nextCell);
+                }
+            }
+        }
+    }
+    std::reverse(escapePath.begin(), escapePath.end());
 }
