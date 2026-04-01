@@ -13,7 +13,6 @@ struct Cell {
     bool south;
     bool east;
     bool west;
-    bool visited;
     bool inMaze;
     int  cellRow;
     int  cellCol;
@@ -21,7 +20,7 @@ struct Cell {
 
     Cell(int row, int col, int pos)
         : north(true), south(true), east(true), west(true),
-          visited(false), inMaze(false), cellRow(row), cellCol(col), cellPos(pos) {};
+          inMaze(false), cellRow(row), cellCol(col), cellPos(pos) {};
     
     int getCellRow() const { return cellRow; };
     int getCellCol() const { return cellCol; };  

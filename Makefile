@@ -8,8 +8,7 @@ BUILD_DIR	:=	build
 
 TARGET	:=	$(BIN_DIR)/main
 
-# SOURCES := $(shell find $(SRC_DIR) -name '*.cpp')
-SOURCES :=	$(shell find $(SRC_DIR) -type f -name '*.cpp' -not \( -name 'maze_k.cpp' \))
+SOURCES := $(shell find $(SRC_DIR) -name '*.cpp')
 
 OBJECTS	:=	$(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCES))
 

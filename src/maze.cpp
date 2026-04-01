@@ -1,4 +1,5 @@
 #include "maze.h"
+#include <cassert>
 #include <cstdlib>
 #include <memory>
 #include <random>
@@ -74,7 +75,7 @@ void Maze::wilson(Renderer* renderer) {
                 clear();
                 renderer->drawMaze(*this);
                 refresh();
-                napms(50);
+                napms(30);
             }
             grid.at(c + (r * cols))->inMaze = true;
             cellsInMaze++;
@@ -129,7 +130,7 @@ void Maze::findEscapePath(const Cell& startCell, const Cell& exitCell) {
         const Cell& currCell = queue.front();
         queue.pop();
         
-        if (currCell.getCellPos() == exitCell.getCellPos()) return;
+        if (currCell.getCellPos() == exitCell.getCellPos()) break;
        
         for (int i = 0; i < 4; ++i) {
             if (currCell.north && i == 0) continue;
@@ -145,12 +146,12 @@ void Maze::findEscapePath(const Cell& startCell, const Cell& exitCell) {
                 if (!visited[nextPos]) {
                     visited[nextPos] = true;
                     parent[nextPos] = currCell.getCellPos();
-                    queue.push(*grid[nextPos]);
+                    queue.push(*grid.at(nextPos));
                 }
             }
         }
     }
-    escapePath.clear();
+
     int pos = exitCell.getCellPos();
     while (pos != startCell.getCellPos()) {
         if (parent[pos] == -1) {

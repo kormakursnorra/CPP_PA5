@@ -1,45 +1,54 @@
 #include <ctime>
-#include <limits>
-#include <ncurses.h>
-#include <stdexcept>
 #include <iostream>
+#include <ncurses.h>
 
 #include "maze.h"
+#include "menu.h"
 #include "player_k.h"
 #include "renderer_k.h"
 
-int main() {
-    Maze maze(15, 15, true);
-    Renderer renderer;
+
+bool runGame(Renderer& renderer, Difficulty diff) {
+    DifficultyConfig cfg = getDifficultyConfig(diff);
+    Maze maze(cfg.rows, cfg.cols, true);
     maze.wilson(&renderer);
+ 
     Player player(0, 0, maze.getRows(), maze.getCols());
     int statusRow = maze.getRows() * 2 + 2;
     // Draw everything once before loop
     renderer.drawMaze(maze);
-    renderer.drawStatus(statusRow, player.getMistakes(), 120);
+    renderer.drawStatus(statusRow, player.getMistakes(), cfg.timeLimit);
     renderer.drawStart(0, 0);
     renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
     renderer.drawPlayer(player.getRow(), player.getCol());
     renderer.mazeRefresh();
 
-    int timeLimit = 120;
     time_t startTime = time(nullptr);
-
     timeout(100);
-
+ 
     int ch;
     while ((ch = getch()) != 'q') {
-        int elapsed = (int)(time(nullptr) - startTime);
-        int timeLeft = timeLimit - elapsed;
-
+        int elapsed  = (int)(time(nullptr) - startTime);
+        int timeLeft = cfg.timeLimit - elapsed;
+ 
         if (timeLeft <= 0) {
-            clear();
-            mvprintw(maze.getRows() + 2, 0, "Times up! You loose. Mistakes: %d",
-            player.getMistakes());
+            // Redraw clean maze then animate escape path
+            renderer.drawMaze(maze);
+            renderer.drawStart(0, 0);
+            renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
+            renderer.mazeRefresh();
+            renderer.drawEscapePath(maze);
+ 
+            timeout(-1);
+            // clear();
+            // mvprintw(cfg.rows + 2, 0,
+                // "Time's up! You lose. Mistakes: %d -- Press any key...",
+                // player.getMistakes());
             renderer.mazeRefresh();
             getch();
-            break;
+            return false;
         }
+ 
         if (ch != ERR) {
             int dr = 0, dc = 0;
             if (ch == KEY_UP) {
@@ -54,36 +63,66 @@ int main() {
             if (ch == KEY_LEFT) {
                 dc = -1;
             }
-
+ 
             if (dr != 0 || dc != 0) {
                 int oldRow = player.getRow();
                 int oldCol = player.getCol();
-
+ 
                 if (player.move(dr, dc, maze)) {
                     mvaddch(oldRow * 2 + 1, oldCol * 3 + 1, '.' | COLOR_PAIR(4));
-
-                    if (oldRow == 0 && oldCol == 0) {
-                        renderer.drawStart(0,0);
-                    } if (oldRow == maze.getExitRow() && oldCol == maze.getExitCol()) {
+ 
+                    if (oldRow == 0 && oldCol == 0)
+                        renderer.drawStart(0, 0);
+                    if (oldRow == maze.getExitRow() && oldCol == maze.getExitCol())
                         renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
-                    }
-
+ 
                     renderer.drawPlayer(player.getRow(), player.getCol());
                 }
             }
         }
+ 
         renderer.drawStatus(statusRow, player.getMistakes(), timeLeft);
         renderer.mazeRefresh();
-
+ 
         if (player.getRow() == maze.getExitRow() &&
             player.getCol() == maze.getExitCol()) {
+                timeout(-1);
                 clear();
-                mvprintw(maze.getRows() + 2, 0, "You Win! Mistakes: %d", player.getMistakes());
+                int finalScore = 100 > (player.getMistakes() + timeLeft) ? 
+                                100 - (player.getMistakes() + timeLeft) : 0;
+                mvprintw(cfg.rows + 2, 0,
+                    "You Win! Final Score: %d -- Press any key...",
+                    finalScore);
                 renderer.mazeRefresh();
                 getch();
-                break;
-            }
+                return true;
+        }
     }
-    renderer.drawMaze(maze);
+    return false;
+}
+
+int main() {
+    Renderer renderer;
+    Menu menu;
+ 
+    init_pair(5, COLOR_WHITE, COLOR_BLACK);
+ 
+    while (true) {
+        MenuResult result = menu.showMain();
+ 
+        if (result == MenuResult::QUIT) break;
+ 
+        if (result == MenuResult::CONTROLS) {
+            menu.showControls();
+            continue;
+        }
+ 
+        if (result == MenuResult::PLAY) {
+            Difficulty diff = menu.showDifficulty();
+            clear();
+            runGame(renderer, diff);
+        }
+    }
+ 
     return 0;
 }
