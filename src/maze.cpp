@@ -8,7 +8,16 @@
 #include "renderer_k.h"
 
 Maze::Maze(int rows, int cols, bool animate) 
-    : rows(rows), cols(cols), animate(animate), grid(rows * cols) {}
+    : rows(rows), cols(cols), animate(animate) 
+    {
+        grid.reserve(rows * cols);
+        for (int r = 0; r < rows; ++r) {
+            for (int c = 0; c < cols; ++c) {
+                grid.push_back(std::make_unique<Cell>(
+                    r, c, c + r * cols));
+            }
+        }
+    }
 
 void Maze::wilson(Renderer* renderer) {
     // Dir offset: N, S, E, W
@@ -36,12 +45,12 @@ void Maze::wilson(Renderer* renderer) {
         do {
             r = rng() % rows;
             c = rng() % cols;
-        } while (grid[r + (c * cols)]->inMaze);
+        } while (grid[c + (r * cols)]->inMaze);
 
         int walkStartR = r;
         int walkStartC = c;
 
-        while(!grid[r + (c * cols)]->inMaze) {
+        while(!grid[c + (r * cols)]->inMaze) {
             int dir;
             int nr;
             int nc;
@@ -58,7 +67,7 @@ void Maze::wilson(Renderer* renderer) {
 
         r = walkStartR;
         c = walkStartC;
-        while (!grid[r + (c * cols)]->inMaze) {
+        while (!grid[c + (r * cols)]->inMaze) {
             int dir = direction[r][c];
             removeWall(r, c, dir);
             if (animate) {
@@ -67,7 +76,7 @@ void Maze::wilson(Renderer* renderer) {
                 refresh();
                 napms(50);
             }
-            grid[r + (c * cols)]->inMaze = true;
+            grid[c + (r * cols)]->inMaze = true;
             cellsInMaze++;
 
             direction[r][c] = -1;
@@ -89,19 +98,19 @@ void Maze::removeWall(int r, int c, int dir) {
     int nc = c + dc[dir];
 
     if (dir == 0) {
-        grid[r + (c * cols)]->north = false;
-        grid[nr + (nc * cols)]->south = false;
+        grid[c + (r * cols)]->north = false;
+        grid[nc + (nr * cols)]->south = false;
     } 
     if (dir == 1) {
-        grid[r + (c * cols)]->south = false; 
-        grid[nr + (nc * cols)]->north = false;
+        grid[c + (r * cols)]->south = false; 
+        grid[nc + (nr * cols)]->north = false;
     }
     if (dir == 2) {
-        grid[r + (c * cols)]->east = false;
-        grid[nr + (nc * cols)]->west = false;
+        grid[c + (r * cols)]->east = false;
+        grid[nc + (nr * cols)]->west = false;
     }
     if (dir == 3) {
-        grid[r + (c * cols)]->west = false;
-        grid[nr + (nc * cols)]->east = false;
+        grid[c + (r * cols)]->west = false;
+        grid[nc + (nr * cols)]->east = false;
     }
 }

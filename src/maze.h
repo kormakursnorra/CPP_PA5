@@ -14,6 +14,17 @@ struct Cell {
     bool west;
     bool visited;
     bool inMaze;
+    int  cellRow;
+    int  cellCol;
+    int  cellPos;
+
+    Cell(int row, int col, int pos)
+        : north(true), south(true), east(true), west(true),
+          visited(false), inMaze(false), cellRow(row), cellCol(col), cellPos(pos) {};
+    
+    int getCellRow() const { return cellRow; };
+    int getCellCol() const { return cellCol; };  
+    int getCellPos() const { return cellPos; };
 };
 
 using MazeGrid = std::vector<std::unique_ptr<Cell>>; 
