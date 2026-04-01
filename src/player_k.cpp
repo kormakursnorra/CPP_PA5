@@ -3,8 +3,8 @@
 
 Player::Player(int startRow, int startCol, int mazeRows, int mazeCols) 
     : row(startRow), col(startCol), mistakes(0),
-    visited(mazeRows, std::vector<bool>(mazeCols, false)) {
-        visited[startRow][startCol] = true;
+    visited(mazeRows * mazeCols, false) {
+        visited[startCol + (startRow * mazeCols)] = true;
     }
 
 bool Player::move(int dr, int dc, const Maze& maze) {
@@ -24,22 +24,6 @@ bool Player::move(int dr, int dc, const Maze& maze) {
     }
     row += dr;
     col += dc;
-    visited[row][col] = true;
+    visited[col + (row * maze.getCols())] = true;
     return true;
-}
-
-int Player::getRow() const {
-    return row;
-}
-
-int Player::getCol() const {
-    return col;
-}
-
-int Player::getMistakes() const {
-    return mistakes;
-}
-
-bool Player::hasVisited(int r, int c) const {
-    return visited[r][c];
 }
