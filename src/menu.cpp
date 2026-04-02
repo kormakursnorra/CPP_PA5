@@ -72,8 +72,8 @@ void Menu::showDifficulty(Difficulty &diff, MenuResult &result) {
     const std::vector<Option> options = {
         {"Easy",      "10x10  |  1:00",  Difficulty::EASY},
         {"Medium",    "15x15  |  1:30",  Difficulty::MEDIUM},
-        {"Hard",      "25x25  |  2:00",  Difficulty::HARD},
-        {"No Escape", "30x30  |  3:00",  Difficulty::NO_ESCAPE},
+        {"Hard",      "20x20  |  2:00",  Difficulty::HARD},
+        {"No Escape", "25x25  |  3:00",  Difficulty::NO_ESCAPE},
     };
 
     int maxX = getmaxx(stdscr);

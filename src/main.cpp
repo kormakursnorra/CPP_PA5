@@ -48,6 +48,9 @@ bool runGame(Renderer& renderer, Difficulty diff) {
     DifficultyConfig config = getDifficultyConfig(diff);
     Maze maze(config.rows, config.cols, true);
     maze.wilson(&renderer);
+
+    int pulseCounter = 0;
+    bool pulseState = false;
     
     Player player(0, 0, maze.getRows(), maze.getCols());
     int statusRow = maze.getRows() * 2 + 2;
@@ -56,7 +59,7 @@ bool runGame(Renderer& renderer, Difficulty diff) {
     renderer.drawStatus(statusRow, player.getMistakes(), config.timeLimit);
     renderer.drawStart(0, 0);
     renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
-    renderer.drawPlayer(player.getRow(), player.getCol());
+    renderer.drawPlayer(player.getRow(), player.getCol(), pulseState);
     renderer.mazeRefresh();
 
     time_t startTime = time(nullptr);
@@ -112,12 +115,15 @@ bool runGame(Renderer& renderer, Difficulty diff) {
                         renderer.drawStart(0, 0);
                     if (oldRow == maze.getExitRow() && oldCol == maze.getExitCol())
                         renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
- 
-                    renderer.drawPlayer(player.getRow(), player.getCol());
                 }
             }
         }
- 
+        pulseCounter++;
+        if (pulseCounter >= 5) {
+            pulseState = !pulseState;
+            pulseCounter = 0;
+        }
+        renderer.drawPlayer(player.getRow(), player.getCol(), pulseState);  
         renderer.mazeRefresh();
  
         if (player.getRow() == maze.getExitRow() &&
