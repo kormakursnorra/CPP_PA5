@@ -1,5 +1,7 @@
 #include <ctime>
+#include <functional>
 #include <ncurses.h>
+#include <iostream>
 
 #include "maze.h"
 #include "menu.h"
@@ -23,17 +25,35 @@ int calculateScore(Difficulty diff, int timeLimit, int timeTaken, int mistakes) 
     return (int)(getBase(diff) * timeBonus * mistakePen);
 }
 
+void endScreen(std::string msg, std::string statMsg, int stats) {
+    timeout(-1);
+    clear();
+    int maxX = getmaxx(stdscr);
+    int maxY = getmaxy(stdscr);
+
+    int msgRow  = maxY / 2 - 6;
+    int statRow = msgRow + 2;
+    int exitRow = statRow + 4;
+
+    std::string exitMsg = "--- Press any key ---"; 
+
+    attron(A_BOLD | COLOR_PAIR(6));
+    mvprintw(msgRow - 1, (maxX - (int)msg.size()) / 2, "%s", msg.c_str());
+    mvprintw(statRow, (maxX - (int)statMsg.size()) / 2, "%s %d" , statMsg.c_str(), stats);
+    mvprintw(exitRow, (maxX - (int)exitMsg.size()) / 2, "%s", exitMsg.c_str());
+    attroff(A_BOLD | COLOR_PAIR(6));
+}
+
 bool runGame(Renderer& renderer, Difficulty diff) {
-    DifficultyConfig cfg = getDifficultyConfig(diff);
-    Maze maze(cfg.rows, cfg.cols, true);
+    DifficultyConfig config = getDifficultyConfig(diff);
+    Maze maze(config.rows, config.cols, true);
     maze.wilson(&renderer);
     
     Player player(0, 0, maze.getRows(), maze.getCols());
     int statusRow = maze.getRows() * 2 + 2;
     // Draw everything once before loop
-    renderer.computeOffsets(maze);
     renderer.drawMaze(maze);
-    renderer.drawStatus(statusRow, player.getMistakes(), cfg.timeLimit);
+    renderer.drawStatus(statusRow, player.getMistakes(), config.timeLimit);
     renderer.drawStart(0, 0);
     renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
     renderer.drawPlayer(player.getRow(), player.getCol());
@@ -41,26 +61,27 @@ bool runGame(Renderer& renderer, Difficulty diff) {
 
     time_t startTime = time(nullptr);
     timeout(100);
- 
+    flushinp();
     int ch;
     while ((ch = getch()) != 'q') {
         int elapsed  = (int)(time(nullptr) - startTime);
-        int timeLeft = cfg.timeLimit - elapsed;
- 
+        int timeLeft = config.timeLimit - elapsed;
+        renderer.drawStatus(statusRow, player.getMistakes(), timeLeft);
+
         if (timeLeft <= 0) {
             // Redraw clean maze then animate escape path
+            renderer.mazeRefresh();
             renderer.drawMaze(maze);
             renderer.drawStart(0, 0);
             renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
             renderer.mazeRefresh();
             renderer.drawEscapePath(maze);
- 
-            timeout(-1);
-            clear();
-            mvprintw(cfg.rows + 2, 0,
-                "Time's up! You lose. Mistakes: %d -- Press any key...",
-                player.getMistakes());
+
+            std::string msg     = "Time's up! The Maze claims another victim...";
+            std::string statMsg = "Mistakes Made:"; 
+            endScreen(msg, statMsg, player.getMistakes());  
             renderer.mazeRefresh();
+            flushinp(); 
             getch();
             return false;
         }
@@ -85,7 +106,7 @@ bool runGame(Renderer& renderer, Difficulty diff) {
                 int oldCol = player.getCol();
  
                 if (player.move(dr, dc, maze)) {
-                    mvaddch(oldRow * 2 + 1, oldCol * 3 + 1, '.' | COLOR_PAIR(4));
+                    renderer.drawBreadcrumbs(oldRow, oldCol);
  
                     if (oldRow == 0 && oldCol == 0)
                         renderer.drawStart(0, 0);
@@ -97,21 +118,18 @@ bool runGame(Renderer& renderer, Difficulty diff) {
             }
         }
  
-        renderer.drawStatus(statusRow, player.getMistakes(), timeLeft);
         renderer.mazeRefresh();
  
         if (player.getRow() == maze.getExitRow() &&
             player.getCol() == maze.getExitCol()) {
-                timeout(-1);
-                clear();
-                int timeTaken = cfg.timeLimit - timeLeft;
-                int finalScore = calculateScore(
-                    diff, cfg.timeLimit, timeTaken, 
-                    player.getMistakes());
-                mvprintw(cfg.rows + 2, 0,
-                    "You Win! Final Score: %d -- Press any key...",
-                    finalScore);
+                int finalScore = calculateScore(diff, config.timeLimit, 
+                    config.timeLimit - timeLeft, player.getMistakes());
+                
+                std::string msg     = "Congratulations, you escaped the Maze!";
+                std::string statMsg = "Final Score:"; 
+                endScreen(msg, statMsg, finalScore);
                 renderer.mazeRefresh();
+                flushinp();
                 getch();
                 return true;
         }
@@ -123,10 +141,11 @@ int main() {
     Renderer renderer;
     Menu menu;
  
-    init_pair(5, COLOR_WHITE, COLOR_BLACK);
+    init_pair(6, COLOR_WHITE, COLOR_BLACK);
  
     while (true) {
-        MenuResult result = menu.showMain();
+        MenuResult result; 
+        menu.showMain(result);
  
         if (result == MenuResult::QUIT) break;
  
@@ -136,7 +155,10 @@ int main() {
         }
  
         if (result == MenuResult::PLAY) {
-            Difficulty diff = menu.showDifficulty();
+            Difficulty diff;
+            menu.showDifficulty(diff, result);
+            if (result == MenuResult::BACK) continue;
+            if (result == MenuResult::QUIT) break;;
             clear();
             runGame(renderer, diff);
         }

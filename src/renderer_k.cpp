@@ -28,6 +28,7 @@ void Renderer::computeOffsets(const Maze& maze) {
 }
 
 void Renderer::drawMaze(const Maze& maze) {
+    computeOffsets(maze);
     int rows = maze.getRows();
     int cols = maze.getCols();
     // draw coners
@@ -84,7 +85,7 @@ void Renderer::drawMaze(const Maze& maze) {
             else if (left) { ch = ACS_HLINE; }
             else if (right) { ch = ACS_HLINE; }
 
-            mvaddch(rowOffset + i * 4, colOffset + j * 3, ch);
+            mvaddch(rowOffset + i * 2, colOffset + j * 3, ch);
         }
     }
     // Draw north walls of each cell
@@ -136,15 +137,8 @@ void Renderer::drawEnd(int r, int c) {
     mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3 + 1, 'E' | COLOR_PAIR(3));
 }
 
-void Renderer::drawBreadcrumbs(const Player& player, const Maze& maze) {
-    int rows = maze.getRows(), cols = maze.getCols();
-    for (int r = 0; r < rows; r++) {
-        for (int c = 0; c < cols; c++) {
-            if (player.hasVisited(r, c, cols)) {
-                mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3 + 1, '.' | COLOR_PAIR(4));
-            }
-        }
-    }
+void Renderer::drawBreadcrumbs(int r, int c) {
+    mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3 + 1, '.' | COLOR_PAIR(4));
 }
 
 void Renderer::drawStatus(int row, int mistakes, int timeLeft) {
@@ -158,7 +152,6 @@ void Renderer::drawEscapePath(const Maze& maze) {
     if (path.empty()) return;
  
     init_pair(5, COLOR_BLUE, COLOR_BLUE);
- 
     for (int i = 0; i < (int)path.size(); ++i) {
         const Cell& cell = path[i].get();
         int r = cell.getCellRow();
@@ -190,6 +183,7 @@ void Renderer::drawEscapePath(const Maze& maze) {
         }
  
         refresh();
-        napms(100);
+        napms(50);
     }
+    napms(750);
 }

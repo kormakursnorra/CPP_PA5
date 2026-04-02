@@ -75,7 +75,7 @@ void Maze::wilson(Renderer* renderer) {
                 clear();
                 renderer->drawMaze(*this);
                 refresh();
-                napms(30);
+                napms(15);
             }
             grid.at(c + (r * cols))->inMaze = true;
             cellsInMaze++;

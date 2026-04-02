@@ -18,7 +18,7 @@ public:
     void mazeRefresh();
     void drawStart(int r, int c);
     void drawEnd(int r, int c);
-    void drawBreadcrumbs(const Player& player, const Maze& maze);
+    void drawBreadcrumbs(int r, int c);
     void drawStatus(int row, int mistakes, int timeLeft);
     void drawEscapePath(const Maze& maze);
 };

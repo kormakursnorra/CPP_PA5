@@ -15,14 +15,14 @@ void Menu::drawTitle(int startRow) {
 void Menu::drawSeparator(int row, int width) {
     int maxX = getmaxx(stdscr);
     int col  = (maxX - width) / 2;
-    attron(COLOR_PAIR(5));
+    attron(COLOR_PAIR(6));
     for (int i = 0; i < width; ++i) {
         mvaddch(row, col + i, ACS_HLINE);
     }
-    attroff(COLOR_PAIR(5));
+    attroff(COLOR_PAIR(6));
 }
 
-MenuResult Menu::showMain() {
+void Menu::showMain(MenuResult &result) {
     const std::vector<std::string> options = {"Play", "Controls", "Quit"};
     int maxX = getmaxx(stdscr);
     int maxY = getmaxy(stdscr);
@@ -53,21 +53,21 @@ MenuResult Menu::showMain() {
 
         mvprintw(maxY - 2, 0, "UP/DOWN: Navigate   ENTER: Select");
         refresh();
-
+        flushinp();
         int ch = getch();
         if (ch == KEY_UP)   selected = (selected - 1 + (int)options.size()) % (int)options.size();
         if (ch == KEY_DOWN) selected = (selected + 1) % (int)options.size();
         if (ch == '\n' || ch == KEY_ENTER || ch == ' ') {
-            if (selected == 0) return MenuResult::PLAY;
-            if (selected == 1) return MenuResult::CONTROLS;
-            if (selected == 2) return MenuResult::QUIT;
+            if (selected == 0) { result = MenuResult::PLAY; return; }
+            if (selected == 1) { result = MenuResult::CONTROLS; return; }
+            if (selected == 2) { result = MenuResult::QUIT; return; } 
         }
-        if (ch == 'q') return MenuResult::QUIT;
+        if (ch == 'q') { result = MenuResult::QUIT; return; }
     }
 }
 
 
-Difficulty Menu::showDifficulty() {
+void Menu::showDifficulty(Difficulty &diff, MenuResult &result) {
     struct Option { std::string label; std::string desc; Difficulty diff; };
     const std::vector<Option> options = {
         {"Easy",      "10x10  |  1:00",  Difficulty::EASY},
@@ -107,14 +107,15 @@ Difficulty Menu::showDifficulty() {
             }
         }
 
-        mvprintw(maxY - 2, 0, "UP/DOWN: Navigate   ENTER: Select   q: Back");
+        mvprintw(maxY - 2, 0, "UP/DOWN: Navigate   ENTER: Select   b: Back   q: Quit");
         refresh();
-
+        flushinp();
         int ch = getch();
         if (ch == KEY_UP)   selected = (selected - 1 + (int)options.size()) % (int)options.size();
         if (ch == KEY_DOWN) selected = (selected + 1) % (int)options.size();
-        if (ch == '\n' || ch == KEY_ENTER || ch == ' ') return options[selected].diff;
-        if (ch == 'q') return options[0].diff;
+        if (ch == '\n' || ch == KEY_ENTER || ch == ' ') { diff = options[selected].diff; return; }
+        if (ch == 'b') { result = MenuResult::BACK; return; }
+        if (ch == 'q') { result = MenuResult::QUIT; return; }
     }
 }
 
@@ -145,5 +146,6 @@ void Menu::showControls() {
     mvprintw(maxY - 2, 0, "Press any key to go back...");
     refresh();
     timeout(-1);
+    flushinp();
     getch();
 }
