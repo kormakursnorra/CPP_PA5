@@ -1,0 +1,41 @@
+CXX^I^I:=^Ig++$
+CXXFLAGS:=^I-std=c++17^I-g^I-Isrc^I-Wall^I-Werror^I-Wextra^I-fsanitize=address^I-MMD^I-MP$
+LDFLAGS^I:=^I-lncurses$
+$
+SRC_DIR^I:=^Isrc$
+BIN_DIR^I:=^Ibin$
+BUILD_DIR^I:=^Ibuild$
+$
+TARGET^I:=^I$(BIN_DIR)/main$
+$
+# SOURCES := $(shell find $(SRC_DIR) -name '*.cpp')$
+SOURCES^I:=^I$(shell find $(SRC_DIR) -type f -not \( -name 'maze_k.cpp' -or -name 'maze_k.h' \))$
+$
+OBJECTS^I:=^I$(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCES))$
+$
+DEPS^I:=^I$(OBJECTS:.o=.d)$
+$
+all:^I$(TARGET)$
+$
+$(TARGET):^I$(OBJECTS)$
+^I@mkdir^I-p^I$(BIN_DIR)$
+^I$(CXX)^I$(CXXFLAGS)^I$(LDFLAGS)^I$^^I-o^I$@$
+^I@echo^I"Built^Itarget:^I$@"$
+$
+$(BUILD_DIR)/%.o:^I$(SRC_DIR)/%.cpp$
+^I@mkdir^I-p^I$(dir $@)$
+^I$(CXX)^I$(CXXFLAGS)^I-c^I$<^I-o^I$@$
+$
+clean:$
+^Irm^I-rf^I$(BUILD_DIR)^I$(BIN_DIR)$
+^I@echo^I"Clean complete"$
+$
+run:^I$(TARGET)$
+^I./$(TARGET)^I$(ARGS)$
+$
+log:$
+^I$(MAKE)^Iall^I2>&1^I|^Itee^Ibuild.log$
+$
+.PHONY:^Iall^Iclean^Irun^Ilog$
+$
+-include^I$(DEPS)$

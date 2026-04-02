@@ -1,0 +1,15 @@
+{
+    "makefile.makefilePath": "/home/kormakur-snorrason/HR/Year2/Cpp/Assignments/PA5/Makefile",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/kormakur-snorrason/HR/Year2/Cpp/Assignments/PA5/bin",
+            "binaryPath": "/home/kormakur-snorrason/HR/Year2/Cpp/Assignments/PA5/bin/main",
+            "binaryArgs": []
+        },
+        {
+            "cwd": "/home/kormakur-snorrason/HR/Year2/Cpp/Assignments/PA5/bin",
+            "binaryPath": "/home/kormakur-snorrason/HR/Year2/Cpp/Assignments/PA5/bin/main",
+            "binaryArgs": ["16 16"]
+        }
+    ]
+}
