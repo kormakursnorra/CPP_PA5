@@ -5,8 +5,8 @@
 
 #include "maze.h"
 #include "menu.h"
-#include "player_k.h"
-#include "renderer_k.h"
+#include "player.h"
+#include "renderer.h"
 
 
 int calculateScore(Difficulty diff, int timeLimit, int timeTaken, int mistakes) {
