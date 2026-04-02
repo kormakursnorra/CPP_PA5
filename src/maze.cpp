@@ -4,7 +4,7 @@
 #include <memory>
 #include <random>
 
-#include "renderer_k.h"
+#include "renderer.h"
 
 Maze::Maze(int rows, int cols, bool animate) 
     : rows(rows), cols(cols), animate(animate) {

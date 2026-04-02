@@ -1,8 +1,8 @@
 #pragma once
 #include "maze.h"
 #include "ncurses.h"
-#include "player_k.h"
-#include "renderer_k.h"
+#include "player.h"
+#include "renderer.h"
 
 class Renderer {
 private:
