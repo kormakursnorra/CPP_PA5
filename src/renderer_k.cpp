@@ -18,6 +18,15 @@ Renderer::~Renderer() {
     endwin();
 }
 
+void Renderer::computeOffsets(const Maze& maze) {
+    int screenRows, screenCols;
+    getmaxyx(stdscr, screenRows, screenCols);
+    int mazeRows = maze.getRows() * 2 + 1;
+    int mazeCols = maze.getCols() * 3 + 1;
+    rowOffset = std::max(0, (screenRows - mazeRows - 2) / 2);
+    colOffset = std::max(0, (screenCols - mazeCols) / 2);
+}
+
 void Renderer::drawMaze(const Maze& maze) {
     int rows = maze.getRows();
     int cols = maze.getCols();
@@ -75,7 +84,7 @@ void Renderer::drawMaze(const Maze& maze) {
             else if (left) { ch = ACS_HLINE; }
             else if (right) { ch = ACS_HLINE; }
 
-            mvaddch(i * 4, j * 3, ch);
+            mvaddch(rowOffset + i * 4, colOffset + j * 3, ch);
         }
     }
     // Draw north walls of each cell
@@ -84,16 +93,16 @@ void Renderer::drawMaze(const Maze& maze) {
             int sr = r * 2;
             int sc = c * 3;
             if (maze.getCell(r, c).north) {
-                mvaddch(sr, sc + 1, ACS_HLINE);
-                mvaddch(sr, sc + 2, ACS_HLINE);
+                mvaddch(rowOffset + sr, colOffset + sc + 1, ACS_HLINE);
+                mvaddch(rowOffset + sr, colOffset + sc + 2, ACS_HLINE);
             }
         }
     }
     // Draw bottom border
     for (int c = 0; c < cols; c++) {
         int sc = c * 3;
-        mvaddch(rows * 2, sc + 1, ACS_HLINE);
-        mvaddch(rows * 2, sc + 2, ACS_HLINE);
+        mvaddch(rowOffset + rows * 2, colOffset + sc + 1, ACS_HLINE);
+        mvaddch(rowOffset + rows * 2, colOffset + sc + 2, ACS_HLINE);
     }
     // Draw vertical walls
     for (int r = 0; r < rows; r++) {
@@ -101,18 +110,18 @@ void Renderer::drawMaze(const Maze& maze) {
             int sr = r * 2;
             int sc = c * 3;
             if (maze.getCell(r, c).west) {
-                mvaddch(sr + 1, sc, ACS_VLINE);
+                mvaddch(rowOffset + sr + 1, colOffset + sc, ACS_VLINE);
             }
         }
     }
 
     for (int r = 0; r < rows; r++) {
-        mvaddch(r * 2 + 1, cols * 3, ACS_VLINE);
+        mvaddch(rowOffset + r * 2 + 1, colOffset + cols * 3, ACS_VLINE);
     }
 }
 
 void Renderer::drawPlayer(int r, int c) {
-    mvaddch(r * 2 + 1, c * 3 + 1, '@' | COLOR_PAIR(1));
+    mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3 + 1, '@' | COLOR_PAIR(1));
 }
 
 void Renderer::mazeRefresh() {
@@ -120,11 +129,11 @@ void Renderer::mazeRefresh() {
 }
 
 void Renderer::drawStart(int r, int c) {
-    mvaddch(r * 2 + 1, c * 3 + 1, 'S' | COLOR_PAIR(2));
+    mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3 + 1, 'S' | COLOR_PAIR(2));
 }
 
 void Renderer::drawEnd(int r, int c) {
-    mvaddch(r * 2 + 1, c * 3 + 1, 'E' | COLOR_PAIR(3));
+    mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3 + 1, 'E' | COLOR_PAIR(3));
 }
 
 void Renderer::drawBreadcrumbs(const Player& player, const Maze& maze) {
@@ -132,14 +141,14 @@ void Renderer::drawBreadcrumbs(const Player& player, const Maze& maze) {
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < cols; c++) {
             if (player.hasVisited(r, c, cols)) {
-                mvaddch(r * 2 + 1, c * 3 + 1, '.' | COLOR_PAIR(4));
+                mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3 + 1, '.' | COLOR_PAIR(4));
             }
         }
     }
 }
 
 void Renderer::drawStatus(int row, int mistakes, int timeLeft) {
-    mvprintw(row, 0, "Mistakes: %d | Time: %02d:%02d",
+    mvprintw(rowOffset + row, colOffset, "Mistakes: %d | Time: %02d:%02d",
     mistakes, timeLeft / 60, timeLeft % 60 );
     clrtoeol();
 }
@@ -156,7 +165,7 @@ void Renderer::drawEscapePath(const Maze& maze) {
         int c = cell.getCellCol();
  
         attron(COLOR_PAIR(5));
-        mvaddch(r * 2 + 1, c * 3 + 1, ' ');
+        mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3 + 1, ' ');
         attroff(COLOR_PAIR(5));
  
         if (i + 1 < (int)path.size()) {
@@ -168,14 +177,14 @@ void Renderer::drawEscapePath(const Maze& maze) {
             if (r == nr) {
                 int passCol = (c < nc) ? c * 3 + 2 : nc * 3 + 2;
                 attron(COLOR_PAIR(5));
-                mvaddch(r * 2 + 1, passCol, ' ');
+                mvaddch(rowOffset + r * 2 + 1, colOffset + passCol, ' ');
                 attroff(COLOR_PAIR(5));
             }
             // Vertical passage
             if (c == nc) {
                 int passRow = (r < nr) ? r * 2 + 2 : nr * 2 + 2;
                 attron(COLOR_PAIR(5));
-                mvaddch(passRow, c * 3 + 1, ' ');
+                mvaddch(rowOffset + passRow, colOffset + c * 3 + 1, ' ');
                 attroff(COLOR_PAIR(5));
             }
         }

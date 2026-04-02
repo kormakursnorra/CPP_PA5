@@ -5,9 +5,14 @@
 #include "renderer_k.h"
 
 class Renderer {
+private:
+    int rowOffset = 0;
+    int colOffset = 0;
+
 public:
     Renderer();
     ~Renderer();
+    void computeOffsets(const Maze& maze);
     void drawMaze(const Maze& maze);
     void drawPlayer(int r, int c);
     void mazeRefresh();

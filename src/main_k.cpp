@@ -27,10 +27,11 @@ bool runGame(Renderer& renderer, Difficulty diff) {
     DifficultyConfig cfg = getDifficultyConfig(diff);
     Maze maze(cfg.rows, cfg.cols, true);
     maze.wilson(&renderer);
- 
+    
     Player player(0, 0, maze.getRows(), maze.getCols());
     int statusRow = maze.getRows() * 2 + 2;
     // Draw everything once before loop
+    renderer.computeOffsets(maze);
     renderer.drawMaze(maze);
     renderer.drawStatus(statusRow, player.getMistakes(), cfg.timeLimit);
     renderer.drawStart(0, 0);
