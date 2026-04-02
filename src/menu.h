@@ -14,7 +14,7 @@ struct DifficultyConfig {
 
 inline DifficultyConfig getDifficultyConfig(Difficulty d) {
     switch (d) {
-        case Difficulty::EASY:      return {15, 15, 2};
+        case Difficulty::EASY:      return {10, 10, 60};
         case Difficulty::MEDIUM:    return {15, 15, 90};
         case Difficulty::HARD:      return {25, 25, 120};
         case Difficulty::NO_ESCAPE: return {30, 30, 180};
