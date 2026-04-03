@@ -19,7 +19,7 @@ The project is a new standalone C++ program using known concepts such as classes
 
 #### 2.2 *Make program take complex decisions*
 
-At the heart of the game is Wilson's Algorithm. Formally, it produces uniform spanning trees using loop-erased random walks. Perfect mazes are in eseence spanning trees, but unlike other algorithms such as Prim's, Kruskal's and DFS, that tend to create predictable patterns or biases, Wilson's manages to generate truly random, perfect mazes.
+At the heart of the game is Wilsons Algorithm. Formally, it produces uniform spanning trees using loop-erased random walks. Perfect mazes are in eseence spanning trees, but unlike other algorithms such as Prims, Kruskals and DFS, that tend to create predictable patterns or biases, Wilsons manages to generate truly random, perfect mazes.
 
 Breadth First Search is ran on the maze graph at generation time. The maze cells are treated as graph nodes, with edges existing only where there is no wall between two adjacent cells. The algorithm produces the shortest path which we used to compare how many steps from the shortest path the player took and use it in the calculation of the players score and to display the shortest path after the game has ended.
 *points: 30*
@@ -43,12 +43,36 @@ The game has 4 difficulty levels (easy, medium, hard and no escape), each with a
 #### 3.4 Menu
 
 
-### 4. Problems encountered
-When diplaying the maze and playermovement we had issues where the maze would flicker since it was redrawing the whole maze for every update. We fixed this by only redrawing the cells that were being changed, so for the maze generation its only redrawing the current cell wilsons algorithm is effecting and redraws the walls for that cell, and for the player it only redraws the current cell and the one he was previously on.
+### 4. Problems Encountered and Interesting Solutions
 
-Another problem we had was with the cell since we could not display the walls and the player at the same time so we had to scale each cell upp to take up multiple characters on screen.
+#### *Problem 1.*
 
-### 5. Interesting solutions
+When diplaying the maze and the player movement we had issues where the maze rendering would flicker since it was redrawing the whole maze for every update.
+
+We overcame this by only redrawing the walls of the current cell Wilsons algorithm is effecting. And for the player movement, we made it so that it only redraws the current- and previous cell he had visited.
+
+#### *Problem 2.*
+
+Another problem we faced had to do with displaying the cell and the player character simultaneously. Due to the differing scaling sizes of the player character and the horizontal- and vertical wall characters, we were unable to render the two a fixed size.
+
+To solve this, we had to upscale every cell on rendering to accomodate for the scaling inbalance. This however wasn't enough, since the size of the horizontal- and vertical walls also differed, we needed to apply different scaling constants to them as well.
+
+#### *Problem 3.*
+
+Despite mazes being functionally identical to graphs, we still ran into some issues when it came to applying BFS on the grid structure. Where the traditional graph and our maze structure diverge is in the implementation of the edges.
+
+While the traditional approach makes use of adjency lists/matrixes to store a graph's edges, we implicitly defined the edges by setting each directional wall of each `Cell` instance to `true` or `false` (has a wall in some direction and does not have a wall in some direction respectively).
+
+So the problem at hand was figuring out how to adjust the algorithm to our specific structure.
+
+The solution we came up with entailed, for each cell, instead of checking it's adjacent cells through the use of adjacency lists, iterating through the four directions available to it (north, south, east, west) and checking if:
+
+1. the cell has a wall at the current direction being checked and
+2. if the next cell accessible to it is within the bounds of the grid.
+
+Although, especially in retrospect, this proved to be more of a minor obstacle rather than a major one, it still required careful though and consideration to implement correctly.
+
+### 5. Interesting Solutions
 
 ### 6. Estimated total point value
 
