@@ -1,28 +1,30 @@
 # PA5 Project Report
 
-## Maze game with pathfinding and a hint system
+## Maze Escape Game
 
-### 1. Project description
-We have made a terminal-based maze game in C++ where the player navigates a randomly generated maze from a start point to an exit, and must reach the end before the alloted time is up. Before the player can start he must choose a difficulty level, the maze grid size and time alloted increases with added difficulty. The maze was generated using wilsons algorithim to generate a uniform maze?---------skoda. During the game, for every move the player makes a "breadcrumb" is left so the player can see where he has been. The players score depends on the time it took for the player to reach the exit and how many mistaks the player made (hitting a wall or straying of the shortest path). The game is displayed in the terminal using the ncurses library, which also handles real-time keyboard input (arrow keys) without requiring the player to press enter.
+### 1. Project Description
 
-Gamla ->Our proposal is to build a terminal-based maze game in C++ where the player navigates a randomly generated maze from a start point to an exit. Before the player starts, the program runs Breath First Search to find the shortest path through the maze. During the game the player can receive hints at points where they're struggling; the hint system uses the precomputed path to reveal the next correct step. Throughout a round, the game keeps track of the number of mistakes the player makes. If the player manages to finish the maze, they receive a score based on the number of steps made in the wrong direction, if the player however is unable to clear the maze under the alloted time limit, he loses. The game is displayed in the terminal using the ncurses library, which also handles real-time keyboard input (arrow keys) without requiring the player to press enter.
+We've developed a terminal-based maze game in C++ where the player has to navigate a randomly generated, perfect maze to reach the exit before the alloted time is up. Before stepping into the maze, the player must choose a difficulty level (Easy, Medium, Hard, No Escape) that determines the size of the maze and the time limit given to him. Throughout the duration of the game, "breadcrumbs" are left behind the player as he navigates through the maze; letting him easily trace back to previous positions.  
 
-### 2. Fulfilled proposal items
+Upon completition, regardless if the player managed to escape or not, the game renders the singular escape path to the player. If the player manages to escape the maze, he receives a completition score that is dependant on the time it took for him to reach the exit and the amount of mistaks he made such as hitting a wall or straying of the shortest path.
 
-#### 2.1 Make entire new program with similar methods to some previous assignment
+The game is displayed in the terminal using the ncurses library, which also handles real-time keyboard input (arrow keys) without requiring the player to press enter.
+
+### 2. Fulfilled Proposal Items
+
+#### 2.1 *Make entire new program with similar methods to some previous assignment*
 
 The project is a new standalone C++ program using known concepts such as classes, data structures, file I/O (loading/saving maze configurations), and standard algorithms that are being applied in a new context.
 *points: 40-60*
 
-#### 2.2 Make program take complex decisions
+#### 2.2 *Make program take complex decisions*
 
-Wilson?????
+At the heart of the game is Wilson's Algorithm. Formally, it produces uniform spanning trees using loop-erased random walks. Perfect mazes are in eseence spanning trees, but unlike other algorithms such as Prim's, Kruskal's and DFS, that tend to create predictable patterns or biases, Wilson's manages to generate truly random, perfect mazes.
 
-Breath First Search is ran on the maze graph at generation time. The maze cells are treated as graph nodes, with edges existing only where there is no wall between two adjacent cells. The algorithm produces the shortest path which we used to compair how many steps from the shortest path the player took and use it in the calculation of the players score and to display the shortest path after the game has ended.
-(by the hint system)-------
-*points: 30* 
+Breadth First Search is ran on the maze graph at generation time. The maze cells are treated as graph nodes, with edges existing only where there is no wall between two adjacent cells. The algorithm produces the shortest path which we used to compare how many steps from the shortest path the player took and use it in the calculation of the players score and to display the shortest path after the game has ended.
+*points: 30*
 
-#### 2.3 Interface with input/output device
+#### 2.3 *Interface with input/output device*
 
 The ncurses library provides real-time keyboard input capturing (f.ex. arrow keys) and full terminal screen rendering. Going beyond the standard stdin/stdout and qualifies as interfacing with an input/output device.
 *points: 20–40*
