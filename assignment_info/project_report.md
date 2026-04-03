@@ -19,7 +19,6 @@ The project is a new standalone C++ program using known concepts such as classes
 Wilson?????
 
 Breath First Search is ran on the maze graph at generation time. The maze cells are treated as graph nodes, with edges existing only where there is no wall between two adjacent cells. The algorithm produces the shortest path which we used to compair how many steps from the shortest path the player took and use it in the calculation of the players score and to display the shortest path after the game has ended.
-(by the hint system)-------
 *points: 30* 
 
 #### 2.3 Interface with input/output device
@@ -30,19 +29,21 @@ The ncurses library provides real-time keyboard input capturing (f.ex. arrow key
 ### 3. Additional implementation items
 
 Hugmyndir:
+#### 3.1 Breadcrumb trail
+As the player moves through the maze the previously visited cell is marked with "." leaving a trail. This lets the player see where they have already been and after the game has ended the player can compare their path against the displayed shortest path.
 
-#### 3.1 Time??
+#### 3.2 Multiple difficulties
+The game has 4 difficulty levels (easy, medium, hard and no escape), each with a different maze size and time limit.
 
-#### 3.2 Breadcrumb trail??
+#### 3.3 Animated maze generation and shortest path
 
-#### 3.3 Multiple difficulties??
-
-#### 3.4 Animated/(Displaying the) maze generation and shortest path??
-
-#### 3.5 Menu??
+#### 3.4 Menu
 
 
 ### 4. Problems encountered
+When diplaying the maze and playermovement we had issues where the maze would flicker since it was redrawing the whole maze for every update. We fixed this by only redrawing the cells that were being changed, so for the maze generation its only redrawing the current cell wilsons algorithm is effecting and redraws the walls for that cell, and for the player it only redraws the current cell and the one he was previously on.
+
+Another problem we had was with the cell since we could not display the walls and the player at the same time so we had to scale each cell upp to take up multiple characters on screen.
 
 ### 5. Interesting solutions
 
