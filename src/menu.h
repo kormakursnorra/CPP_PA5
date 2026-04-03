@@ -12,7 +12,6 @@ struct DifficultyConfig {
     int timeLimit;
 };
 
-
 class Menu {
 private:
     void drawTitle(int startRow);

@@ -66,7 +66,6 @@ void Menu::showMain(MenuResult &result) {
     }
 }
 
-
 void Menu::showDifficulty(Difficulty &diff, MenuResult &result) {
     struct Option { std::string label; std::string desc; Difficulty diff; };
     const std::vector<Option> options = {
