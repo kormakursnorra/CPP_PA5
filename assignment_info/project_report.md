@@ -29,18 +29,24 @@ Breadth First Search is ran on the maze graph at generation time. The maze cells
 The ncurses library provides real-time keyboard input capturing (f.ex. arrow keys) and full terminal screen rendering. Going beyond the standard stdin/stdout and qualifies as interfacing with an input/output device.
 *points: 20–40*
 
-### 3. Additional implementation items
+### 3. Additional implementation
 
-Hugmyndir:
 #### 3.1 Breadcrumb trail
 As the player moves through the maze the previously visited cell is marked with "." leaving a trail. This lets the player see where they have already been and after the game has ended the player can compare their path against the displayed shortest path.
+*points: 5*
 
 #### 3.2 Multiple difficulties
 The game has 4 difficulty levels (easy, medium, hard and no escape), each with a different maze size and time limit.
+*points: 5*
 
 #### 3.3 Animated maze generation and shortest path
 
+We animated the maze generation in real time using ncurses, which shows how the Wilsons algorithm creates the maze. The shortest path is animated at the end of each game, then the player can see how close their path was from the shortest path.
+*points: 10*
+
 #### 3.4 Menu
+We made a navigation menu with a main screen, a control screen and a difficulty selection screen, which allows the player to choose between them without restarting the program.
+*points: 10-15*
 
 
 ### 4. Problems Encountered and Interesting Solutions
