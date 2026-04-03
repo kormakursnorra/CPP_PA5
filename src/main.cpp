@@ -9,7 +9,7 @@
 #include "renderer.h"
 
 
-int calculateScore(Difficulty diff, int timeLimit, int timeTaken, int mistakes, int extraSteps) {
+int calculateScore(Difficulty diff, int timeLimit, int timeTaken, int mistakes, int extraSteps, int shortestPath) {
     auto getBase = [&](Difficulty diff) -> int {
         switch(diff) {
             case Difficulty::EASY:      return 1000;
@@ -23,7 +23,7 @@ int calculateScore(Difficulty diff, int timeLimit, int timeTaken, int mistakes, 
 
     float timeBonus   = std::max(0.1f, (float)(timeLimit - timeTaken) / timeLimit);
     float mistakePen  = 1.0f / (1.0f + mistakes);
-    float stepPen = 1.0f / (1.0f + extraSteps);
+    float stepPen = 1.0f / (1.0f + (float)extraSteps / shortestPath);
     return (int)(getBase(diff) * timeBonus * mistakePen * stepPen);
 }
 
@@ -149,7 +149,7 @@ bool runGame(Renderer& renderer, Difficulty diff) {
                 int extraSteps = playerSteps - shortestPath;
                 bool tookShortest = playerSteps == shortestPath && player.getMistakes() == 0; //skoda
                 int finalScore = calculateScore(diff, config.timeLimit, 
-                    config.timeLimit - timeLeft, player.getMistakes(), extraSteps);
+                    config.timeLimit - timeLeft, player.getMistakes(), extraSteps, shortestPath);
                 
                 renderer.drawMaze(maze);
                 renderer.drawStart(0, 0);
