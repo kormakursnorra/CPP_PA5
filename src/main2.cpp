@@ -55,6 +55,7 @@ bool runGame(Renderer& renderer, Difficulty diff) {
         }
         return {10, 10, 60};
     };
+    
     DifficultyConfig config = getConfig(diff);
     Maze maze(config.rows, config.cols, true);
     maze.wilson(&renderer);
