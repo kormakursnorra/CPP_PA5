@@ -46,7 +46,16 @@ void endScreen(std::string msg, std::string statMsg, int stats) {
 }
 
 bool runGame(Renderer& renderer, Difficulty diff) {
-    DifficultyConfig config = getDifficultyConfig(diff);
+    auto getConfig = [&](Difficulty diff) -> DifficultyConfig {
+        switch (diff) {
+            case Difficulty::EASY:      return {10, 10, 60};
+            case Difficulty::MEDIUM:    return {15, 15, 90};
+            case Difficulty::HARD:      return {20, 20, 120};
+            case Difficulty::NO_ESCAPE: return {25, 25, 180};
+        }
+        return {10, 10, 60};
+    };
+    DifficultyConfig config = getConfig(diff);
     Maze maze(config.rows, config.cols, true);
     maze.wilson(&renderer);
     
