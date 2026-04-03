@@ -9,20 +9,22 @@
 #include "renderer.h"
 
 
-int calculateScore(Difficulty diff, int timeLimit, int timeTaken, int mistakes) {
+int calculateScore(Difficulty diff, int timeLimit, int timeTaken, int mistakes, int extraSteps, int shortestPath) {
     auto getBase = [&](Difficulty diff) -> int {
         switch(diff) {
             case Difficulty::EASY:      return 1000;
             case Difficulty::MEDIUM:    return 2000;
             case Difficulty::HARD:      return 3000;
             case Difficulty::NO_ESCAPE: return 4000;
+            case Difficulty::SHOWCASE:  return 1000;
         } return 1000;
 
     };
 
     float timeBonus   = std::max(0.1f, (float)(timeLimit - timeTaken) / timeLimit);
     float mistakePen  = 1.0f / (1.0f + mistakes);
-    return (int)(getBase(diff) * timeBonus * mistakePen);
+    float stepPen = 1.0f / (1.0f + (float)extraSteps / shortestPath);
+    return (int)(getBase(diff) * timeBonus * mistakePen * stepPen);
 }
 
 void endScreen(std::string msg, std::string statMsg, int stats) {
@@ -45,18 +47,35 @@ void endScreen(std::string msg, std::string statMsg, int stats) {
 }
 
 bool runGame(Renderer& renderer, Difficulty diff) {
-    DifficultyConfig config = getDifficultyConfig(diff);
+
+    auto getConfig = [&](Difficulty diff) -> DifficultyConfig {
+        switch (diff) {
+            case Difficulty::EASY:      return {10, 10, 60};
+            case Difficulty::MEDIUM:    return {15, 15, 90};
+            case Difficulty::HARD:      return {20, 20, 120};
+            case Difficulty::NO_ESCAPE: return {25, 25, 180};
+            case Difficulty::SHOWCASE:  return {25, 25, 10};
+        }
+        return {10, 10, 60};
+    };
+
+    DifficultyConfig config = getConfig(diff);
     Maze maze(config.rows, config.cols, true);
     maze.wilson(&renderer);
+
+    int pulseCounter = 0;
+    bool pulseState = false;
     
     Player player(0, 0, maze.getRows(), maze.getCols());
+    int playerSteps = 0;
+    int shortestPath = (int)maze.getEscapePath().size() - 1;
     int statusRow = maze.getRows() * 2 + 2;
     // Draw everything once before loop
     renderer.drawMaze(maze);
     renderer.drawStatus(statusRow, player.getMistakes(), config.timeLimit);
     renderer.drawStart(0, 0);
     renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
-    renderer.drawPlayer(player.getRow(), player.getCol());
+    renderer.drawPlayer(player.getRow(), player.getCol(), pulseState);
     renderer.mazeRefresh();
 
     time_t startTime = time(nullptr);
@@ -106,26 +125,46 @@ bool runGame(Renderer& renderer, Difficulty diff) {
                 int oldCol = player.getCol();
  
                 if (player.move(dr, dc, maze)) {
+                    playerSteps++;
                     renderer.drawBreadcrumbs(oldRow, oldCol);
  
                     if (oldRow == 0 && oldCol == 0)
                         renderer.drawStart(0, 0);
                     if (oldRow == maze.getExitRow() && oldCol == maze.getExitCol())
                         renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
- 
-                    renderer.drawPlayer(player.getRow(), player.getCol());
                 }
             }
         }
- 
+        pulseCounter++;
+        if (pulseCounter >= 5) {
+            pulseState = !pulseState;
+            pulseCounter = 0;
+        }
+
+        renderer.drawPlayer(player.getRow(), player.getCol(), pulseState);  
         renderer.mazeRefresh();
  
         if (player.getRow() == maze.getExitRow() &&
             player.getCol() == maze.getExitCol()) {
+                int extraSteps = playerSteps - shortestPath;
+                bool tookShortest = playerSteps == shortestPath && player.getMistakes() == 0; //skoda
                 int finalScore = calculateScore(diff, config.timeLimit, 
-                    config.timeLimit - timeLeft, player.getMistakes());
+                    config.timeLimit - timeLeft, player.getMistakes(), extraSteps, shortestPath);
                 
-                std::string msg     = "Congratulations, you escaped the Maze!";
+                renderer.drawMaze(maze);
+                renderer.drawStart(0, 0);
+                renderer.drawEnd(maze.getExitRow(), maze.getExitCol());
+                renderer.mazeRefresh();
+                renderer.drawEscapePath(maze);
+
+                //std::string msg    = "Congratulations, you escaped the Maze!";
+                
+                std::string msg;
+                if (tookShortest){
+                    msg = "Perfect run! You took the shortest path!";
+                } else {
+                    msg ="Congratulations, you escaped the Maze!";
+                }
                 std::string statMsg = "Final Score:"; 
                 endScreen(msg, statMsg, finalScore);
                 renderer.mazeRefresh();

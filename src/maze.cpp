@@ -38,6 +38,12 @@ void Maze::wilson(Renderer* renderer) {
     // -1 means not part of current walk
     std::vector<int> direction(rows * cols, -1);
 
+    if (animate && renderer) {
+        renderer->computeOffsets(*this);
+        renderer->drawMaze(*this);
+        refresh();
+    }
+
     while (cellsInMaze < totalCells) {
         // Pick random cell not in maze
         int r, c;
@@ -72,9 +78,7 @@ void Maze::wilson(Renderer* renderer) {
             int dir = direction.at(c + (r * cols));
             removeWall(r, c, dir);
             if (animate) {
-                clear();
-                renderer->drawMaze(*this);
-                refresh();
+                renderer->drawWallRemoval(*this, r, c, dir);
                 napms(15);
             }
             grid.at(c + (r * cols))->inMaze = true;
