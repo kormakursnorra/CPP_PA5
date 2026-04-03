@@ -5,22 +5,12 @@
 
 enum class MenuResult { PLAY, QUIT, CONTROLS, BACK };
 
-enum class Difficulty { EASY, MEDIUM, HARD, NO_ESCAPE };
+enum class Difficulty { EASY, MEDIUM, HARD, NO_ESCAPE, SHOWCASE };
 struct DifficultyConfig {
     int rows;
     int cols;
     int timeLimit;
 };
-
-inline DifficultyConfig getDifficultyConfig(Difficulty d) {
-    switch (d) {
-        case Difficulty::EASY:      return {10, 10, 60};
-        case Difficulty::MEDIUM:    return {15, 15, 90};
-        case Difficulty::HARD:      return {25, 25, 120};
-        case Difficulty::NO_ESCAPE: return {30, 30, 180};
-    }
-    return {10, 10, 60};
-}
 
 class Menu {
 private:

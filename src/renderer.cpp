@@ -34,58 +34,7 @@ void Renderer::drawMaze(const Maze& maze) {
     // draw coners
     for (int i = 0; i <= rows; i++) {
         for (int j = 0; j <= cols; j++) {
-            bool right = false;
-            if (j < cols) {
-                if (i == 0 || i == rows) {
-                    right = true;
-                } else if (maze.getCell(i, j).north) {
-                    right = true;
-                }
-            }
-            bool left = false;
-            if (j > 0) {
-                if (i == 0 || i == rows) {
-                    left = true;
-                } else if (maze.getCell(i, j - 1).north) {
-                    left = true;
-                }
-            }
-
-            bool down = false;
-            if (i < rows) {
-                if (j == 0 || j == cols) {
-                    down = true;
-                } else if (maze.getCell(i, j).west) {
-                    down = true;
-                }
-            }
-
-            bool up = false;
-            if (i > 0) {
-                if (j == 0 || j == cols) {
-                    up = true;
-                } else if (maze.getCell(i - 1, j).west) {
-                    up = true;
-                }
-            }
-            chtype ch = ' ';
-            if (up && down && left && right) { ch = ACS_PLUS; }
-            else if (up && down && right) { ch = ACS_LTEE; }
-            else if (up && down && left) { ch = ACS_RTEE; }
-            else if (up && left && right) { ch = ACS_BTEE; }
-            else if (down && left && right) { ch = ACS_TTEE; }
-            else if (up && down) { ch = ACS_VLINE; }
-            else if (left && right) { ch = ACS_HLINE; }
-            else if (down && right) { ch = ACS_ULCORNER; }
-            else if (down && left) { ch = ACS_URCORNER; }
-            else if (up && right) { ch = ACS_LLCORNER; }
-            else if (up && left) { ch = ACS_LRCORNER; }
-            else if (up) { ch = ACS_VLINE; }
-            else if (down) { ch = ACS_VLINE; }
-            else if (left) { ch = ACS_HLINE; }
-            else if (right) { ch = ACS_HLINE; }
-
-            mvaddch(rowOffset + i * 2, colOffset + j * 3, ch);
+            drawCorner(maze, i, j);
         }
     }
     // Draw north walls of each cell
@@ -121,8 +70,9 @@ void Renderer::drawMaze(const Maze& maze) {
     }
 }
 
-void Renderer::drawPlayer(int r, int c) {
-    mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3 + 1, '@' | COLOR_PAIR(1));
+void Renderer::drawPlayer(int r, int c, bool pulse) {
+    char ch = pulse ? '0' : '@';
+    mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3 + 1, ch | COLOR_PAIR(1));
 }
 
 void Renderer::mazeRefresh() {
@@ -186,4 +136,87 @@ void Renderer::drawEscapePath(const Maze& maze) {
         napms(50);
     }
     napms(750);
+}
+
+void Renderer::drawCorner(const Maze& maze, int i, int j) {
+    int rows = maze.getRows();
+    int cols = maze.getCols();
+    bool right = false;
+    if (j < cols) {
+        if (i == 0 || i == rows) {
+            right = true;
+        } else if (maze.getCell(i, j).north) {
+            right = true;
+        }
+    }
+    bool left = false;
+    if (j > 0) {
+        if (i == 0 || i == rows) {
+            left = true;
+        } else if (maze.getCell(i, j - 1).north) {
+            left = true;
+        }
+    }
+
+    bool down = false;
+    if (i < rows) {
+        if (j == 0 || j == cols) {
+            down = true;
+        } else if (maze.getCell(i, j).west) {
+            down = true;
+        }
+    }
+
+    bool up = false;
+    if (i > 0) {
+        if (j == 0 || j == cols) {
+            up = true;
+        } else if (maze.getCell(i - 1, j).west) {
+            up = true;
+        }
+    }
+    chtype ch = ' ';
+    if (up && down && left && right) { ch = ACS_PLUS; }
+    else if (up && down && right) { ch = ACS_LTEE; }
+    else if (up && down && left) { ch = ACS_RTEE; }
+    else if (up && left && right) { ch = ACS_BTEE; }
+    else if (down && left && right) { ch = ACS_TTEE; }
+    else if (up && down) { ch = ACS_VLINE; }
+    else if (left && right) { ch = ACS_HLINE; }
+    else if (down && right) { ch = ACS_ULCORNER; }
+    else if (down && left) { ch = ACS_URCORNER; }
+    else if (up && right) { ch = ACS_LLCORNER; }
+    else if (up && left) { ch = ACS_LRCORNER; }
+    else if (up) { ch = ACS_VLINE; }
+    else if (down) { ch = ACS_VLINE; }
+    else if (left) { ch = ACS_HLINE; }
+    else if (right) { ch = ACS_HLINE; }
+
+    mvaddch(rowOffset + i * 2, colOffset + j * 3, ch);
+}
+
+void Renderer::drawWallRemoval(const Maze& maze, int r, int c, int dir) {
+    if (dir == 0) { // north wall above cell
+        mvaddch(rowOffset + r * 2, colOffset + c * 3 + 1, ' ');
+        mvaddch(rowOffset + r * 2, colOffset + c * 3 + 2, ' ');
+        drawCorner(maze, r, c);
+        drawCorner(maze, r, c + 1);
+    }
+    if (dir == 1) { // south wall below cell
+        mvaddch(rowOffset + (r + 1) * 2, colOffset + c * 3 + 1, ' ');
+        mvaddch(rowOffset + (r + 1) * 2, colOffset + c * 3 + 2, ' ');
+        drawCorner(maze, r + 1, c);
+        drawCorner(maze, r + 1, c + 1);
+    }
+    if (dir == 2) { // east wall right of cell
+        mvaddch(rowOffset + r * 2 + 1, colOffset + (c + 1) * 3, ' ');
+        drawCorner(maze, r, c + 1);
+        drawCorner(maze, r + 1, c + 1);
+    }
+    if (dir == 3) { // west wall left of cell
+        mvaddch(rowOffset + r * 2 + 1, colOffset + c * 3, ' ');
+        drawCorner(maze, r, c);
+        drawCorner(maze, r + 1, c);
+    }
+    refresh();
 }

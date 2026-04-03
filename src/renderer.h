@@ -2,7 +2,6 @@
 #include "maze.h"
 #include "ncurses.h"
 #include "player.h"
-#include "renderer.h"
 
 class Renderer {
 private:
@@ -14,11 +13,13 @@ public:
     ~Renderer();
     void computeOffsets(const Maze& maze);
     void drawMaze(const Maze& maze);
-    void drawPlayer(int r, int c);
+    void drawPlayer(int r, int c, bool pulse);
     void mazeRefresh();
     void drawStart(int r, int c);
     void drawEnd(int r, int c);
     void drawBreadcrumbs(int r, int c);
     void drawStatus(int row, int mistakes, int timeLeft);
     void drawEscapePath(const Maze& maze);
+    void drawCorner(const Maze& maze, int i, int j);
+    void drawWallRemoval(const Maze& maze, int r, int c, int dir);
 };
