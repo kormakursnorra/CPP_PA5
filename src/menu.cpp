@@ -74,6 +74,7 @@ void Menu::showDifficulty(Difficulty &diff, MenuResult &result) {
         {"Medium",    "15x15  |  1:30",  Difficulty::MEDIUM},
         {"Hard",      "20x20  |  2:00",  Difficulty::HARD},
         {"No Escape", "25x25  |  3:00",  Difficulty::NO_ESCAPE},
+        {"Showcase", "25x25  |  0:10",  Difficulty::SHOWCASE},
     };
 
     int maxX = getmaxx(stdscr);
